@@ -28,3 +28,6 @@ class DataFrame:
             node_data = self.nodes.append(
                 Node(int(node_data[0]), float(node_data[1]), float(node_data[2]))
             )
+
+    def getNodes(self) -> list[Node]:
+        return self.nodes
