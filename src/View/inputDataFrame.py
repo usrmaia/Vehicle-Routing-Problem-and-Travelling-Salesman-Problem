@@ -15,7 +15,6 @@ class DataFrame:
                 if not line.startswith("NODE_COORD_SECTION"):
                     continue
 
-                next(lines)
                 self._buildDataList(lines)
                 break
 

@@ -4,15 +4,17 @@ from View.inputDataFrame import DataFrame
 from tabuSearch import tabu_search_vrp
 
 
-instance_path = "C:\\Users\\georg\\Codes\\Vehicle Routing Problem and Travelling Salesman Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\my10.tsp"
+instance_path = "C:\\Users\\georg\\Codes\\Vehicle Routing Problem and Travelling Salesman Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\pla85900.tsp"
 
 time0 = time()
 ds_reader = DataFrame(instance_path)
-ds_reader._readDataSet()
 time1 = time()
 print(f"Tempo de leitura do arquivo: {time1 - time0}")
 
 nodes = ds_reader.getNodes()
+time0 = time()
+route = tabu_search_vrp(nodes, 16, 5)
+time1 = time()
+print(f"Tempo de tabu dos nós: {time1 - time0}")
 
-route = tabu_search_vrp(nodes, 16, 20)
-print(route)
+print(route.calculateTotalCost())

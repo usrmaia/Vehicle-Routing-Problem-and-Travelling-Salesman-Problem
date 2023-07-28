@@ -10,17 +10,19 @@ class Route:
         self._route.append(node)
         self._cost += cust
 
+    def setNode(self, node: Node):
+        self._route.append(node)
+
     def getCost(self):
         return self._cost
 
     def __str__(self) -> str:
+        route = ""
         for position in range(len(self._route) - 1):
-            print(
-                self._route[position].id,
-                end=" -> ",
-            )
+            route += str(self._route[position].id) + " -> "
 
-        print(self._route[-1])
+        route += str(self._route[-1].id)
+        return route
 
     def __lt__(self, route: "Route"):
         return self.getCost() < route.getCost()
