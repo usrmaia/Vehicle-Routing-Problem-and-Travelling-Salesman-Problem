@@ -1,7 +1,7 @@
 from time import time
 from Model.route import Route
 from View.inputDataFrame import DataFrame
-from tabuSearch import tabu_search_vrp
+from Controller.TabuSearch.tabuSearch import tabu_search_vrp
 
 
 instance_path = "C:\\Users\\georg\\Codes\\Vehicle Routing Problem and Travelling Salesman Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\pla85900.tsp"

@@ -6,9 +6,15 @@ class Route:
         self._route: list[Node] = []
         self._cost: float = 0.0
 
-    def setNode(self, node: Node, cust: float):
+    def setNode(self, node: Node, cost: float):
         self._route.append(node)
-        self._cost += cust
+        self._cost += cost
+
+    def setCost(self, cost: float):
+        self._cost += cost
+
+    def unsetCost(self, cost: float):
+        self._cost -= cost
 
     def setNode(self, node: Node):
         self._route.append(node)

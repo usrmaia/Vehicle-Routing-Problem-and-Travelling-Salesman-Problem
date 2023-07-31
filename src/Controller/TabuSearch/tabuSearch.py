@@ -1,7 +1,7 @@
 from random import randint
 from typing import List
-from Model.node import Node
-from Model.route import Route
+from ...Model.node import Node
+from ...Model.route import Route
 
 
 def tabu_search_vrp(nodes: list[Node], tabu_size: int, max_iterations: int) -> Route:
@@ -103,3 +103,66 @@ class TabuSearch:
 
         self.route.setNode(depot)
         self.route.calculateTotalCost()
+
+    def Swap(self, i, j):
+        self.route.unsetCost(self.route._route[i].distanceTo(self.route._route[i + 1]))
+        self.route.unsetCost(self.route._route[j].distanceTo(self.route._route[j + 1]))
+
+        self.route._route[i], self.route._route[j] = (
+            self.route._route[j],
+            self.route._route[i],
+        )
+
+        self.route.setCost(self.route._route[i].distanceTo(self.route._route[i + 1]))
+        self.route.setCost(self.route._route[j].distanceTo(self.route._route[j + 1]))
+
+    def TwoOPT(self, i, j):
+        self.route.unsetCost(self.route._route[i].distanceTo(self.route._route[i + 1]))
+        self.route.unsetCost(self.route._route[j].distanceTo(self.route._route[j + 1]))
+
+        self.route._route = (
+            self.route._route[: i + 1]
+            + self.route._route[j:i:-1]
+            + self.route._route[j + 1 :]
+        )
+
+        self.route.setCost(self.route._route[i].distanceTo(self.route._route[i + 1]))
+        self.route.setCost(self.route._route[j].distanceTo(self.route._route[j + 1]))
+
+    def OrOPT1(self, i, j):
+        self.route.unsetCost(self.route._route[i].distanceTo(self.route._route[i + 1]))
+        self.route.unsetCost(self.route._route[i - 1].distanceTo(self.route._route[i]))
+        self.route.setCost(
+            self.route._route[i - 1].distanceTo(self.route._route[i + 1])
+        )
+
+        self.route.unsetCost(self.route._route[j - 1].distanceTo(self.route._route[j]))
+        self.route.setCost(self.route._route[j - 1].distanceTo(self.route._route[i]))
+        self.route.unsetCost(self.route._route[i].distanceTo(self.route._route[j]))
+
+        self.route._route = (
+            self.route._route[:i],
+            self.route._route[i + 1 : j],
+            self.route._route[i],
+            self.route._route[j + 1 :],
+        )
+
+    def OrOPT2(self, i, j):
+        self.route.unsetCost(
+            self.route._route[i + 1].distanceTo(self.route._route[i + 2])
+        )
+        self.route.unsetCost(self.route._route[i - 1].distanceTo(self.route._route[i]))
+        self.route.setCost(
+            self.route._route[i - 1].distanceTo(self.route._route[i + 2])
+        )
+
+        self.route.unsetCost(self.route._route[j - 1].distanceTo(self.route._route[j]))
+        self.route.setCost(self.route._route[j - 1].distanceTo(self.route._route[i]))
+        self.route.unsetCost(self.route._route[i + 1].distanceTo(self.route._route[j]))
+
+        self.route._route = (
+            self.route._route[:i]
+            + self.route._route[i + 2 : j]
+            + self.route._route[i : i + 1]
+            + self.route._route[j + 1 :]
+        )
