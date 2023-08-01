@@ -106,7 +106,9 @@ class TabuSearch:
 
     def Swap(self, i, j):
         self.route.unsetCost(self.route._route[i].distanceTo(self.route._route[i + 1]))
-        self.route.unsetCost(self.route._route[j].distanceTo(self.route._route[j + 1]))
+        self.route.unsetCost(self.route._route[i-1].distanceTo(self.route._route[i]))
+        self.route.unsetCost(self.route._route[j].distanceTo(self.route._route[j+1]))
+        self.route.unsetCost(self.route._route[j-1].distanceTo(self.route._route[j]))
 
         self.route._route[i], self.route._route[j] = (
             self.route._route[j],
@@ -114,11 +116,13 @@ class TabuSearch:
         )
 
         self.route.setCost(self.route._route[i].distanceTo(self.route._route[i + 1]))
-        self.route.setCost(self.route._route[j].distanceTo(self.route._route[j + 1]))
+        self.route.setCost(self.route._route[i-1].distanceTo(self.route._route[i]))
+        self.route.setCost(self.route._route[j].distanceTo(self.route._route[j+1]))
+        self.route.setCost(self.route._route[j-1].distanceTo(self.route._route[j]))
 
     def TwoOPT(self, i, j):
         self.route.unsetCost(self.route._route[i].distanceTo(self.route._route[i + 1]))
-        self.route.unsetCost(self.route._route[j].distanceTo(self.route._route[j + 1]))
+        self.route.unsetCost(self.route._route[j - 1].distanceTo(self.route._route[j]))
 
         self.route._route = (
             self.route._route[: i + 1]
@@ -127,42 +131,54 @@ class TabuSearch:
         )
 
         self.route.setCost(self.route._route[i].distanceTo(self.route._route[i + 1]))
-        self.route.setCost(self.route._route[j].distanceTo(self.route._route[j + 1]))
+        self.route.setCost(self.route._route[j - 1].distanceTo(self.route._route[j]))
 
     def OrOPT1(self, i, j):
         self.route.unsetCost(self.route._route[i].distanceTo(self.route._route[i + 1]))
         self.route.unsetCost(self.route._route[i - 1].distanceTo(self.route._route[i]))
-        self.route.setCost(
-            self.route._route[i - 1].distanceTo(self.route._route[i + 1])
-        )
-
-        self.route.unsetCost(self.route._route[j - 1].distanceTo(self.route._route[j]))
-        self.route.setCost(self.route._route[j - 1].distanceTo(self.route._route[i]))
-        self.route.unsetCost(self.route._route[i].distanceTo(self.route._route[j]))
+        self.route.unsetCost(self.route._route[j].distanceTo(self.route._route[j + 1]))
 
         self.route._route = (
-            self.route._route[:i],
-            self.route._route[i + 1 : j],
-            self.route._route[i],
-            self.route._route[j + 1 :],
+            self.route._route[:i + 1]
+            + self.route._route[i + 1 : j]
+            + self.route._route[i]
+            + self.route._route[j + 1 :]
         )
+
+        self.route.setCost(self.route._route[i - 1].distanceTo(self.route._route[i]))
+        self.route.setCost(self.route._route[j].distanceTo(self.route._route[j + 1]))
+        self.route.setCost(self.route._route[j - 1].distanceTo(self.route._route[j]))
 
     def OrOPT2(self, i, j):
-        self.route.unsetCost(
-            self.route._route[i + 1].distanceTo(self.route._route[i + 2])
-        )
         self.route.unsetCost(self.route._route[i - 1].distanceTo(self.route._route[i]))
-        self.route.setCost(
-            self.route._route[i - 1].distanceTo(self.route._route[i + 2])
-        )
-
-        self.route.unsetCost(self.route._route[j - 1].distanceTo(self.route._route[j]))
-        self.route.setCost(self.route._route[j - 1].distanceTo(self.route._route[i]))
-        self.route.unsetCost(self.route._route[i + 1].distanceTo(self.route._route[j]))
+        self.route.unsetCost(self.route._route[i + 1].distanceTo(self.route._route[i + 2]))
+        self.route.unsetCost(self.route._route[j + 1].distanceTo(self.route._route[j + 2]))
 
         self.route._route = (
             self.route._route[:i]
-            + self.route._route[i + 2 : j]
-            + self.route._route[i : i + 1]
+            + self.route._route[i + 2 : j + 2]
+            + self.route._route[i : i + 2]
+            + self.route._route[j + 2 :]
+        )
+
+        self.route.unsetCost(self.route._route[i - 1].distanceTo(self.route._route[i]))
+        self.route.unsetCost(self.route._route[i + 1].distanceTo(self.route._route[i + 2]))
+        self.route.unsetCost(self.route._route[j + 1].distanceTo(self.route._route[j + 2]))
+    
+    def ShiftSegment(self, i, j, segment):
+        self.route.unsetCost(self.route._route[i - 1].distanceTo(self.route._route[i]))
+        self.route.unsetCost(self.route._route[i + segment].distanceTo(self.route._route[i + segment + 1]))
+        self.route.unsetCost(self.route._route[j].distanceTo(self.route._route[j + 1]))
+
+        self.route._route = (
+            self.route._route[:i]
+            + self.route._route[i + segment : j]
+            + self.route._route[i : i + segment]
             + self.route._route[j + 1 :]
         )
+
+        self.route.setCost(self.route._route[i - 1].distanceTo(self.route._route[i]))
+        self.route.setCost(self.route._route[i + segment].distanceTo(self.route._route[i + segment + 1]))
+        self.route.setCost(self.route._route[j].distanceTo(self.route._route[j + 1]))
+
+        
