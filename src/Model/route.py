@@ -45,6 +45,4 @@ class Route:
         for position in range(len(self._route) - 1):
             self._cost += self._route[position].distanceTo(self._route[position + 1])
 
-        self._cost += self._route[-1].distanceTo(self._route[0])
-
         return self._cost
