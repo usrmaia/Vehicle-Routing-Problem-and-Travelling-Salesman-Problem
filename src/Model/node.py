@@ -5,18 +5,14 @@ class Node:
         self.coord_y = coord_y
         self._distance_to = {}
 
-    def distanceTo(self, node: "Node", reply: bool = True) -> float:
-        distance = False
-
+    def distanceTo(self, node: "Node") -> float:
+        # TODO testar salvando as distancias no dicionário e não salvando as distâncias mas calculando e retornando
+        if self.id in node._distance_to:
+            return node._distance_to[self.id]
+        
         if node.id in self._distance_to:
-            distance = self._distance_to[node.id]
-            return distance
-        elif reply:
-            distance = node.distanceTo(self, reply=False)
-
-            if distance:
-                return distance
-
+            return self._distance_to[node.id]
+        
         distance = self.euclideanDistance(node)
         self._distance_to[node.id] = distance
 
