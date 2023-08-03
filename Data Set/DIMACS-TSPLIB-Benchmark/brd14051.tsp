@@ -3,6 +3,7 @@ COMMENT : BR Deutschland in den Grenzen von 1989 (Bachem/Wottawa)
 TYPE : TSP
 DIMENSION : 14051
 EDGE_WEIGHT_TYPE : EUC_2D
+LOWER_BOUND : 467127.622222
 NODE_COORD_SECTION
     1    2918    6528
     2    2925    6597

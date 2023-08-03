@@ -52,6 +52,7 @@ class TabuSearch:
     
     def isStop(self) -> bool:
         return self._iteration > self._max_iterations
+        return self.route.getCost() >= 
 
 class Moves(Enum):
     SWAP = 0
