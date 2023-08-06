@@ -3,6 +3,7 @@ COMMENT : my instance to test
 TYPE : TSP
 DIMENSION : 10
 EDGE_WEIGHT_TYPE : EUC_2D
+LOWER_BOUND : 40.59
 NODE_COORD_SECTION
     1    5    5
     2    0    4
