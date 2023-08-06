@@ -37,7 +37,14 @@ class Route:
         return self._route
 
     def __eq__(self, route: "Route") -> bool:
-        return self._route == route.getRoute()
+        for i in range(0, len(self._route) - 1):
+            if self._route[i] != route.getRoute()[i]:
+                return False
+
+        return round(self._cost, 4) == round(route.getCost(), 4)
+
+    def __ne__(self, route: "Route") -> bool:
+        return not self.__eq__(route)
 
     def calculateTotalCost(self) -> float:
         self._cost = 0
