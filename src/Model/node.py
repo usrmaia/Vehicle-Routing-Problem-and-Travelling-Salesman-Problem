@@ -9,10 +9,10 @@ class Node:
         # TODO testar salvando as distancias no dicionário e não salvando as distâncias mas calculando e retornando
         if self.id in node._distance_to:
             return node._distance_to[self.id]
-        
+
         if node.id in self._distance_to:
             return self._distance_to[node.id]
-        
+
         distance = self.euclideanDistance(node)
         self._distance_to[node.id] = distance
 
