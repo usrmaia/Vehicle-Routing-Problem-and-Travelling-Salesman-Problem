@@ -42,3 +42,5 @@ class ShowSolution:
         nx.draw_networkx_edges(G, pos=node_positions, edgelist=edges, edge_color=route_color, width=2)
 
         plt.show()
+
+ShowSolution()

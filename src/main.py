@@ -17,7 +17,7 @@ time1 = time()
 print(f"Tempo de leitura do arquivo: {time1 - time0}... {nodes}, {lower_bound}")
 
 time0 = time()
-route: Route = TabuSearch(nodes, lower_bound, 16, 10).tabuSearch()
+route: Route = TabuSearch(nodes, lower_bound, 16, 10).getRoute()
 time1 = time()
 print(f"Tempo de tabu dos nós: {time1 - time0}")
 print(route)
