@@ -39,6 +39,36 @@ def NearestNeighbor(nodes: List[Node]) -> Route:
     return route
 
 
+def SwapCalculateCost(route: Route, i: int, j: int) -> float:
+    route.unsetCost(route._route[i - 1].distanceTo(route._route[i]))
+    route.unsetCost(route._route[i].distanceTo(route._route[i + 1]))
+
+    if not i + 1 == j:
+        route.unsetCost(route._route[j - 1].distanceTo(route._route[j]))
+
+    route.unsetCost(route._route[j].distanceTo(route._route[j + 1]))
+
+    #
+
+    route.setCost(route._route[i - 1].distanceTo(route._route[j]))
+
+    if not i + 1 == j:
+        route.setCost(route._route[j].distanceTo(route._route[i + 1]))
+        route.setCost(route._route[j - 1].distanceTo(route._route[i]))
+    else:
+        route.setCost(route._route[j].distanceTo(route._route[i]))
+
+    route.setCost(route._route[i].distanceTo(route._route[j + 1]))
+
+    return route.getCost()
+
+
+def SwapCalculateRoute(route: Route, i: int, j: int) -> Route:
+    route._route[i], route._route[j] = route._route[j], route._route[i]
+
+    return route
+
+
 def Swap(route: Route, i: int, j: int) -> Route:
     route.unsetCost(route._route[i].distanceTo(route._route[i + 1]))
     route.unsetCost(route._route[i - 1].distanceTo(route._route[i]))
@@ -59,6 +89,26 @@ def Swap(route: Route, i: int, j: int) -> Route:
     return route
 
 
+def TwoOPTCalculateCost(route: Route, i: int, j: int) -> float:
+    route.unsetCost(route._route[i - 1].distanceTo(route._route[i]))
+    route.unsetCost(route._route[j].distanceTo(route._route[j + 1]))
+
+    #
+
+    route.setCost(route._route[i - 1].distanceTo(route._route[j]))
+    route.setCost(route._route[i].distanceTo(route._route[j + 1]))
+
+    return route.getCost()
+
+
+def TwoOPTCalculateRoute(route: Route, i: int, j: int) -> Route:
+    route._route = (
+        route._route[:i] + route._route[j : i - 1 : -1] + route._route[j + 1 :]
+    )
+
+    return route
+
+
 def TwoOPT(route: Route, i: int, j: int) -> Route:
     route.unsetCost(route._route[i].distanceTo(route._route[i - 1]))
     route.unsetCost(route._route[j].distanceTo(route._route[j + 1]))
@@ -73,18 +123,86 @@ def TwoOPT(route: Route, i: int, j: int) -> Route:
     return route
 
 
-def OrOPT(route: Route, i: int, j: int, segment: int) -> Route:
+def OrOPTCalculateCost(route: Route, i: int, j: int, segment: int = 0) -> float:
     route.unsetCost(route._route[i - 1].distanceTo(route._route[i]))
     route.unsetCost(route._route[i + segment].distanceTo(route._route[i + segment + 1]))
-    route.unsetCost(route._route[j].distanceTo(route._route[j + 1]))
 
-    route._route = (
-        route._route[:i]
-        + route._route[i + segment : j]
-        + route._route[i : i + segment]
-        + route._route[j:]
-    )
+    if i < j:
+        route.unsetCost(route._route[j].distanceTo(route._route[j + 1]))
 
-    route.setCost(route._route[i - 1].distanceTo(route._route[i]))
-    route.setCost(route._route[i + segment].distanceTo(route._route[i + segment + 1]))
-    route.setCost(route._route[j].distanceTo(route._route[j + 1]))
+        #
+
+        route.setCost(route._route[i - 1].distanceTo(route._route[i + segment + 1]))
+        route.setCost(route._route[j].distanceTo(route._route[i]))
+        route.setCost(route._route[i + segment].distanceTo(route._route[j + 1]))
+    elif i > j:
+        route.unsetCost(route._route[j - 1].distanceTo(route._route[j]))
+
+        #
+
+        route.setCost(route._route[j - 1].distanceTo(route._route[i]))
+        route.setCost(route._route[i + segment].distanceTo(route._route[j]))
+        route.setCost(route._route[i - 1].distanceTo(route._route[i + segment + 1]))
+
+    return route.getCost()
+
+
+def OrOPTCalculateRoute(route: Route, i: int, j: int, segment: int = 0) -> Route:
+    if i < j:
+        route._route = (
+            route._route[:i]
+            + route._route[i + segment + 1 : j + 1]
+            + route._route[i : i + segment + 1]
+            + route._route[j + 1 :]
+        )
+    elif i > j:
+        route._route = (
+            route._route[:j]
+            + route._route[i : i + segment + 1]
+            + route._route[j:i]
+            + route._route[i + segment + 1 :]
+        )
+
+    return route
+
+
+def OrOPT(route: Route, i: int, j: int, segment: int = 0) -> Route:
+    # i != depot ou i + segment != depot ou j != depot
+    route.unsetCost(route._route[i - 1].distanceTo(route._route[i]))
+    route.unsetCost(route._route[i + segment].distanceTo(route._route[i + segment + 1]))
+    if i < j:
+        route.unsetCost(route._route[j].distanceTo(route._route[j + 1]))
+    elif i > j:
+        route.unsetCost(route._route[j - 1].distanceTo(route._route[j]))
+
+    if i < j:
+        route._route = (
+            route._route[:i]
+            + route._route[i + segment + 1 : j + 1]
+            + route._route[i : i + segment + 1]
+            + route._route[j + 1 :]
+        )
+    elif i > j:
+        route._route = (
+            route._route[:j]
+            + route._route[i : i + segment + 1]
+            + route._route[j:i]
+            + route._route[i + segment + 1 :]
+        )
+
+    if i < j:
+        route.setCost(route._route[i - 1].distanceTo(route._route[i]))
+        route.setCost(route._route[j].distanceTo(route._route[j + 1]))
+        route.setCost(
+            route._route[j - segment - 1].distanceTo(route._route[j - segment])
+        )
+    elif j < i:
+        route.setCost(
+            route._route[i + segment].distanceTo(route._route[i + segment + 1])
+        )
+        route.setCost(route._route[j - 1].distanceTo(route._route[j]))
+        route.setCost(
+            route._route[j + segment].distanceTo(route._route[j + segment + 1])
+        )
+
+    return route
