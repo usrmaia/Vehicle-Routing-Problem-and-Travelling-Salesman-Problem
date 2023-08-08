@@ -69,26 +69,6 @@ def SwapCalculateRoute(route: Route, i: int, j: int) -> Route:
     return route
 
 
-def Swap(route: Route, i: int, j: int) -> Route:
-    route.unsetCost(route._route[i].distanceTo(route._route[i + 1]))
-    route.unsetCost(route._route[i - 1].distanceTo(route._route[i]))
-    route.unsetCost(route._route[j].distanceTo(route._route[j + 1]))
-
-    if i + 1 < j:
-        route.unsetCost(route._route[j - 1].distanceTo(route._route[j]))
-
-    route._route[i], route._route[j] = route._route[j], route._route[i]
-
-    route.setCost(route._route[i].distanceTo(route._route[i + 1]))
-    route.setCost(route._route[i - 1].distanceTo(route._route[i]))
-    route.setCost(route._route[j].distanceTo(route._route[j + 1]))
-
-    if i + 1 < j:
-        route.setCost(route._route[j - 1].distanceTo(route._route[j]))
-
-    return route
-
-
 def TwoOPTCalculateCost(route: Route, i: int, j: int) -> float:
     route.unsetCost(route._route[i - 1].distanceTo(route._route[i]))
     route.unsetCost(route._route[j].distanceTo(route._route[j + 1]))
@@ -105,20 +85,6 @@ def TwoOPTCalculateRoute(route: Route, i: int, j: int) -> Route:
     route._route = (
         route._route[:i] + route._route[j : i - 1 : -1] + route._route[j + 1 :]
     )
-
-    return route
-
-
-def TwoOPT(route: Route, i: int, j: int) -> Route:
-    route.unsetCost(route._route[i].distanceTo(route._route[i - 1]))
-    route.unsetCost(route._route[j].distanceTo(route._route[j + 1]))
-
-    route._route = (
-        route._route[:i] + route._route[j : i - 1 : -1] + route._route[j + 1 :]
-    )
-
-    route.setCost(route._route[i].distanceTo(route._route[i - 1]))
-    route.setCost(route._route[j].distanceTo(route._route[j + 1]))
 
     return route
 
