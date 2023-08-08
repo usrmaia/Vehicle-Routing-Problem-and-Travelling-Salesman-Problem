@@ -17,8 +17,6 @@ class TabuSearch:
         # self.RandIns(nodes)
         # self.NearestNeighbor(nodes) 
 
-        return self.tabuSearch()
-
     def tabuSearch(self) -> Route:
         while self.isStop():
             i = randint(1, len(self.route) - 1 - 1) 
