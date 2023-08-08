@@ -28,7 +28,7 @@ class Route:
             route += str(self._route[position].id) + " -> "
 
         route += str(self._route[-1].id)
-        return route
+        return self.route.getCost(), route
 
     def __lt__(self, route: "Route"):
         return self.getCost() < route.getCost()
