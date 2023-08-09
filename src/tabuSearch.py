@@ -33,10 +33,11 @@ class TabuSearch:
             s = randint(0, min(2, j - i))
 
             _heuristic = Heuristic(randint(0, 2))
+            move = Move(i, j, s, _heuristic)
 
             self._iteration += 1
 
-            if (i, j, s, _heuristic) in self._tabu_list:
+            if move in self._tabu_list:
                 continue
 
             candidate_route = Route()
@@ -53,7 +54,7 @@ class TabuSearch:
                     )
 
             if candidate_route.getCost() > self.route.getCost():
-                self._tabu_list.append(i, j, s, _heuristic)
+                self._tabu_list.append(move)
                 continue
 
             # Mudanca de rota
@@ -70,6 +71,7 @@ class TabuSearch:
                     )
 
             self.route._route = candidate_route._route
+            self.route._cost = candidate_route.getCost()
             self._iteration = 0
 
         return self.route
@@ -92,17 +94,32 @@ class Heuristic(Enum):
     TWOOPT = 1
     OROPT = 2
 
+class Move:
+    def __init__(self, i, j, s, h) -> None:
+        self.i = i
+        self.j = j
+        self.s = s
+        self.h = h
+
 
 class TabuList:
     def __init__(self, len) -> None:
         self._tabu_list = {}
         self._len = len
 
-    def append(self, move):
+    def append(self, move: Move):
         if len(self._tabu_list) > self._len:
-            self._tabu_list = {}
+            self._tabu_list.clear() # Abordagem que limpa a lista
+            # self._tabu_list.pop(self._tabu_list.values()[0]) # Abordagem que remove o primeiro elemento
 
-        self._tabu_list[move] = True
+        if move.h != Heuristic.OROPT:
+            move = (move.i, move.j, move.h)
 
-    def __contains__(self, move):
-        return move in self._tabu_list
+        self._tabu_list[move] = True 
+        
+
+    def __contains__(self, move: Move):
+        if move.h == Heuristic.OROPT:
+            return move in self._tabu_list
+        
+        return (move.i, move.j, move.h) in self._tabu_list
