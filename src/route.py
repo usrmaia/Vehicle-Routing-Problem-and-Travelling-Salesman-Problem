@@ -1,4 +1,4 @@
-from .node import Node
+from node import Node
 
 
 class Route:
@@ -28,7 +28,7 @@ class Route:
             route += str(self._route[position].id) + " -> "
 
         route += str(self._route[-1].id)
-        return self.route.getCost(), route
+        return f"{self.getCost()}, {route}"
 
     def __lt__(self, route: "Route"):
         return self.getCost() < route.getCost()

@@ -1,6 +1,6 @@
 from typing import List
 from io import TextIOWrapper
-from Model.node import Node
+from node import Node
 
 
 class DataFrame:

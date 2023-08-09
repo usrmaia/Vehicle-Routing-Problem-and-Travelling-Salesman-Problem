@@ -1,12 +1,10 @@
 from typing import List
 from time import time
-from Model.route import Route
-from Model.node import Node
-from View.inputDataFrame import DataFrame
-from Controller.TabuSearch.tabuSearch import TabuSearch
-
-# from Controller.TabuSearch.tabuSearch import tabu_search_vrp
-
+from tabuSearch import TabuSearch
+from route import Route
+from node import Node
+from inputDataFrame import DataFrame
+from showSolution import showSolution
 
 time0 = time()
 nodes: List[Node]
@@ -21,3 +19,5 @@ route: Route = TabuSearch(nodes, lower_bound, 16, 10).getRoute()
 time1 = time()
 print(f"Tempo de tabu dos nós: {time1 - time0}")
 print(route)
+
+showSolution(route)
