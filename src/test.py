@@ -1,9 +1,9 @@
 import pytest
 from random import seed
 from typing import List
-from Model.heuristics import *
-from Model.node import Node
-from Model.route import Route
+from heuristics import *
+from node import Node
+from route import Route
 
 
 lower_bound = 40.59
