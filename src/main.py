@@ -10,7 +10,8 @@ from showSolution import showSolution
 time0 = time()
 nodes: List[Node]
 nodes, lower_bound = DataFrame(
-    "C:\\Users\\georg\\Codes\\Vehicle Routing Problem and Travelling Salesman Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
+    # "C:\\Users\\georg\\Codes\\Vehicle Routing Problem and Travelling Salesman Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
+    "/workspaces/Vehicle-Routing-Problem-and-Travelling-Salesman-Problem/Data Set/DIMACS-TSPLIB-Benchmark/my10.tsp"
 ).getDataFrame()
 time1 = time()
 print(f"Tempo de leitura do arquivo: {time1 - time0}...")
