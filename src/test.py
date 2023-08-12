@@ -2,8 +2,10 @@ import pytest
 from random import seed
 from typing import List
 from heuristics import *
+from inputDataFrame import DataFrame
 from node import Node
 from route import Route
+from tabuSearch import TabuSearch
 
 
 lower_bound = 40.59
@@ -386,7 +388,7 @@ def testSwapCalculateRoute():
 
     i, j = 1, 2
     route_swap0 = SwapCalculateRoute(route_swap0, i, j)
-    assert route_swap0.getRoute() == route_swap1.getRoute()
+    assert route_swap0 == route_swap1.getRoute()
 
     # Caso i e j, primeiro cliente e cliente qualquer
 
@@ -424,7 +426,7 @@ def testSwapCalculateRoute():
 
     i, j = 1, 6
     route_swap0 = SwapCalculateRoute(route_swap0, i, j)
-    assert route_swap0.getRoute() == route_swap1.getRoute()
+    assert route_swap0 == route_swap1.getRoute()
 
     # Caso i e j, primeiro cliente e último cliente
 
@@ -462,7 +464,7 @@ def testSwapCalculateRoute():
 
     i, j = 1, 9
     route_swap0 = SwapCalculateRoute(route_swap0, i, j)
-    assert route_swap0.getRoute() == route_swap1.getRoute()
+    assert route_swap0 == route_swap1.getRoute()
 
     # Caso i e j quaisquer, não consecutivos, nem primeiro e nem último cliente
 
@@ -500,7 +502,7 @@ def testSwapCalculateRoute():
 
     i, j = 2, 7
     route_swap0 = SwapCalculateRoute(route_swap0, i, j)
-    assert route_swap0.getRoute() == route_swap1.getRoute()
+    assert route_swap0 == route_swap1.getRoute()
 
     # Caso i e j quaisquer, consecutivos, nem primeiro e nem último cliente
 
@@ -538,7 +540,7 @@ def testSwapCalculateRoute():
 
     i, j = 4, 5
     route_swap0 = SwapCalculateRoute(route_swap0, i, j)
-    assert route_swap0.getRoute() == route_swap1.getRoute()
+    assert route_swap0 == route_swap1.getRoute()
 
     # Caso i e j, não consecutivos, cliente qualquer e último cliente
 
@@ -576,7 +578,7 @@ def testSwapCalculateRoute():
 
     i, j = 4, 9
     route_swap0 = SwapCalculateRoute(route_swap0, i, j)
-    assert route_swap0.getRoute() == route_swap1.getRoute()
+    assert route_swap0 == route_swap1.getRoute()
 
     # Caso i e j, consecutivos, penúltimo cliente e último cliente
 
@@ -614,7 +616,7 @@ def testSwapCalculateRoute():
 
     i, j = 8, 9
     route_swap0 = SwapCalculateRoute(route_swap0, i, j)
-    assert route_swap0.getRoute() == route_swap1.getRoute()
+    assert route_swap0 == route_swap1.getRoute()
 
 
 def testTwoOPTCalculateCost():
@@ -922,7 +924,7 @@ def testTwoOPTCalculateRoute():
 
     i, j = 1, 2
     route_twoopt0 = TwoOPTCalculateRoute(route_twoopt0, i, j)
-    assert route_twoopt0.getRoute() == route_twoopt1.getRoute()
+    assert route_twoopt0 == route_twoopt1.getRoute()
 
     # Caso i e j, primeiro cliente e cliente não consecutivo
 
@@ -960,7 +962,7 @@ def testTwoOPTCalculateRoute():
 
     i, j = 1, 5
     route_twoopt0 = TwoOPTCalculateRoute(route_twoopt0, i, j)
-    assert route_twoopt0.getRoute() == route_twoopt1.getRoute()
+    assert route_twoopt0 == route_twoopt1.getRoute()
 
     # Caso i e j, primeiro cliente e último cliente
 
@@ -998,7 +1000,7 @@ def testTwoOPTCalculateRoute():
 
     i, j = 1, 9
     route_twoopt0 = TwoOPTCalculateRoute(route_twoopt0, i, j)
-    assert route_twoopt0.getRoute() == route_twoopt1.getRoute()
+    assert route_twoopt0 == route_twoopt1.getRoute()
 
     # Caso i e j, não consecutivo, clientes quaisquer
 
@@ -1036,7 +1038,7 @@ def testTwoOPTCalculateRoute():
 
     i, j = 2, 7
     route_twoopt0 = TwoOPTCalculateRoute(route_twoopt0, i, j)
-    assert route_twoopt0.getRoute() == route_twoopt1.getRoute()
+    assert route_twoopt0 == route_twoopt1.getRoute()
 
     # Caso i e j, clientes quaisquer consecutivos
 
@@ -1074,7 +1076,7 @@ def testTwoOPTCalculateRoute():
 
     i, j = 4, 5
     route_twoopt0 = TwoOPTCalculateRoute(route_twoopt0, i, j)
-    assert route_twoopt0.getRoute() == route_twoopt1.getRoute()
+    assert route_twoopt0 == route_twoopt1.getRoute()
 
     # Caso i e j, cliente qualquer e último cliente
 
@@ -1112,7 +1114,7 @@ def testTwoOPTCalculateRoute():
 
     i, j = 5, 9
     route_twoopt0 = TwoOPTCalculateRoute(route_twoopt0, i, j)
-    assert route_twoopt0.getRoute() == route_twoopt1.getRoute()
+    assert route_twoopt0 == route_twoopt1.getRoute()
 
     # Caso i e j, penúltimo cliente e último cliente
 
@@ -1150,7 +1152,7 @@ def testTwoOPTCalculateRoute():
 
     i, j = 8, 9
     route_twoopt0 = TwoOPTCalculateRoute(route_twoopt0, i, j)
-    assert route_twoopt0.getRoute() == route_twoopt1.getRoute()
+    assert route_twoopt0 == route_twoopt1.getRoute()
 
 
 def testOrOPTCalculateCost():
@@ -2790,7 +2792,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 1, 2, 0
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, primeiro cliente e cliente consecutivo com segmento 1
 
@@ -2828,7 +2830,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 1, 3, 1
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, primeiro cliente e cliente consecutivo com segmento 2
 
@@ -2866,7 +2868,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 1, 4, 2
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, primeiro cliente e cliente qualquer sem segmento
 
@@ -2904,7 +2906,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 1, 6, 0
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, primeiro cliente e cliente qualquer com segmento 1
 
@@ -2942,7 +2944,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 1, 7, 1
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, primeiro cliente e cliente qualquer com segmento 2
 
@@ -2980,7 +2982,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 1, 6, 2
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, primeiro cliente e último cliente sem segmento
 
@@ -3018,7 +3020,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 1, 9, 0
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, primeiro cliente e último cliente com segmento 1
 
@@ -3056,7 +3058,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 1, 9, 1
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, primeiro cliente e último cliente com segmento 2
 
@@ -3094,7 +3096,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 1, 9, 2
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, não consecutivo, clientes quaisquer, sem segmento
 
@@ -3132,7 +3134,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 3, 6, 0
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, não consecutivo, clientes quaisquer, com segmento 1
 
@@ -3170,7 +3172,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 2, 7, 1
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, não consecutivo, clientes quaisquer, com segmento 2
 
@@ -3208,7 +3210,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 3, 7, 2
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, consecutivo, clientes quaisquer, sem segmento
 
@@ -3246,7 +3248,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 5, 6, 0
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, consecutivo, clientes quaisquer, com segmento 1
 
@@ -3284,7 +3286,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 5, 7, 1
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, consecutivo, clientes quaisquer, com segmento 2
 
@@ -3322,7 +3324,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 2, 5, 2
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, penúltimo cliente e último cliente sem segmento
 
@@ -3360,7 +3362,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 8, 9, 0
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, triúltimo cliente e último cliente com segmento 1
 
@@ -3398,7 +3400,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 7, 9, 1
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, quatroúltimo cliente e último cliente com segmento 2
 
@@ -3436,7 +3438,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 6, 9, 2
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, último cliente e cliente qualquer sem segmento
 
@@ -3474,7 +3476,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 5, 9, 0
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, último cliente e cliente qualquer com segmento 1
 
@@ -3512,7 +3514,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 4, 9, 1
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, primeiro cliente e cliente qualquer com segmento 2
 
@@ -3550,7 +3552,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 3, 9, 2
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     #
 
@@ -3590,7 +3592,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 2, 1, 0
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, primeiro cliente e cliente consecutivo com segmento 1
 
@@ -3628,7 +3630,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 3, 1, 1
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, primeiro cliente e cliente consecutivo com segmento 2
 
@@ -3666,7 +3668,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 4, 1, 2
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, primeiro cliente e cliente qualquer sem segmento
 
@@ -3704,7 +3706,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 6, 1, 0
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, primeiro cliente e cliente qualquer com segmento 1
 
@@ -3742,7 +3744,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 7, 1, 1
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, primeiro cliente e cliente qualquer com segmento 2
 
@@ -3780,7 +3782,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 6, 1, 2
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, primeiro cliente e último cliente sem segmento
 
@@ -3818,7 +3820,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 9, 1, 0
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, primeiro cliente e penúltimo cliente com segmento 1
 
@@ -3856,7 +3858,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 8, 1, 1
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, primeiro cliente e triúltimo cliente com segmento 2
 
@@ -3894,7 +3896,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 7, 1, 2
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, não consecutivo, clientes quaisquer, sem segmento
 
@@ -3932,7 +3934,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 6, 3, 0
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, não consecutivo, clientes quaisquer, com segmento 1
 
@@ -3970,7 +3972,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 7, 2, 1
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, não consecutivo, clientes quaisquer, com segmento 2
 
@@ -4008,7 +4010,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 7, 3, 2
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, consecutivo, clientes quaisquer, sem segmento
 
@@ -4046,7 +4048,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 6, 5, 0
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, consecutivo, clientes quaisquer, com segmento 1
 
@@ -4084,7 +4086,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 7, 5, 1
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, consecutivo, clientes quaisquer, com segmento 2
 
@@ -4122,7 +4124,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 5, 2, 2
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, penúltimo cliente e último cliente sem segmento
 
@@ -4160,7 +4162,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 9, 8, 0
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, triúltimo cliente e penúltimo cliente com segmento 1
 
@@ -4198,7 +4200,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 8, 7, 1
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, quatroúltimo cliente e triúltimo cliente com segmento 2
 
@@ -4236,7 +4238,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 7, 6, 2
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, último cliente e cliente qualquer sem segmento
 
@@ -4274,7 +4276,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 9, 5, 0
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, penúltimo cliente e cliente qualquer com segmento 1
 
@@ -4312,7 +4314,7 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 8, 4, 1
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, triúltimo cliente e cliente qualquer com segmento 1
 
@@ -4350,7 +4352,22 @@ def testOrOPTCalculateRoute():
 
     i, j, s = 7, 3, 2
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
-    assert route_oropt0.getRoute() == route_oropt1.getRoute()
+    assert route_oropt0 == route_oropt1.getRoute()
+
+
+def testTabuSearch():
+    instances = ["vm1084", "u1060", "d1291", "rl1304", "rl1323"]
+
+    for i in instances:
+        nodes, lower_bound = DataFrame(
+            f"C:\\Users\\georg\\Codes\\Vehicle Routing Problem and Travelling Salesman Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\{i}.tsp"
+            # f"/workspaces/Vehicle-Routing-Problem-and-Travelling-Salesman-Problem/Data Set/DIMACS-TSPLIB-Benchmark/{i}.tsp"
+        ).getDataFrame()
+
+        ts = TabuSearch(nodes, lower_bound, 50, 4000 + 100 * len(nodes))
+        route: Route = ts.best_route
+
+        assert round(route._cost, 2) == round(route.calculateTotalCost(), 2)
 
 
 testRandomInsertion()
@@ -4361,3 +4378,4 @@ testTwoOPTCalculateCost()
 testTwoOPTCalculateRoute()
 testOrOPTCalculateCost()
 testOrOPTCalculateRoute()
+testTabuSearch()
