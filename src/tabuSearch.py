@@ -24,294 +24,83 @@ class TabuSearch:
 
         self.intance_lower_bound = intance_lower_bound
 
-        self.best_route = Route()
         self.nodes = nodes
+        self.best_route = Route()
 
-        # self.best_route = RandomInsertion(nodes)
-        self.best_route = NearestNeighbor(copy(nodes))
+        self.tabuSearch()
 
-        # free nodes
+    def initialSolution(self, num_solution) -> Route:
+        candidates: List[Route] = [Route()] * num_solution
 
-        # self.tabuSearch()
-        self.tabuSearchLS()
+        for i in range(num_solution):
+            candidates[i] = NearestNeighbor(copy(self.nodes))
+            # candidates[i] = RandomInsertion(copy(self.nodes))
+
+        _, best = min(enumerate(candidates), key=lambda n: n[1].getCost())
+
+        return best
 
     def tabuSearch(self):
-        # seed(42)
+        self.best_route = self.initialSolution(10)
+
+        num_swap, num_twoopt, num_oropt = 0, 0, 0
+
         while not self.isStop():
-            i = randint(1, len(self.best_route._route) - 1 - 1 - 1)
-            j = randint(i + 1, len(self.best_route._route) - 1 - 1)
-            segment = randint(0, min(2, j - i - 1))
-
-            heuristic = Heuristic(randint(0, 2))
-            move = Move(heuristic, i, j, segment)
-
-            self._iteration += 1
-
-            if move in self._tabu_list:
-                continue
-
-            candidate_route = copy(self.best_route)
-
-            # Pesquisa do custo
-            match heuristic:
-                case Heuristic.SWAP:
-                    SwapCalculateCost(candidate_route, i, j)
-                case Heuristic.TWOOPT:
-                    TwoOPTCalculateCost(candidate_route, i, j)
-                case Heuristic.OROPT:
-                    OrOPTCalculateCost(candidate_route, i, j, segment)
-
-            if candidate_route.getCost() > self.best_route.getCost():
-                self._tabu_list.append(move)
-                continue
-
-            # Mudanca de rota
-            match heuristic:
-                case Heuristic.SWAP:
-                    SwapCalculateRoute(candidate_route, i, j)
-                case Heuristic.TWOOPT:
-                    TwoOPTCalculateRoute(candidate_route, i, j)
-                case Heuristic.OROPT:
-                    OrOPTCalculateRoute(candidate_route, i, j, segment)
-
-            self.best_route = copy(candidate_route)
-            self._iteration = 0
-
-    def tabuSearchFor(self):
-        # seed(42)
-        while not self.isStop():
-            for i in range(1, len(self.best_route._route) - 1 - 1 - 1):
-                for j in range(i + 1, len(self.best_route._route) - 1 - 1):
-                    for heuristic in range(0, 2):
-                        heuristic = Heuristic(heuristic)
-                        segment = randint(0, min(2, j - i - 1))
-
-                        # heuristic = Heuristic(randint(0, 2))
-                        move = Move(heuristic, i, j, segment)
-
-                        self._iteration += 1
-
-                        if move in self._tabu_list:
-                            continue
-
-                        candidate_route = copy(self.best_route)
-
-                        # Pesquisa do custo
-                        match heuristic:
-                            case Heuristic.SWAP:
-                                SwapCalculateCost(candidate_route, i, j)
-                            case Heuristic.TWOOPT:
-                                TwoOPTCalculateCost(candidate_route, i, j)
-                            case Heuristic.OROPT:
-                                OrOPTCalculateCost(candidate_route, i, j, segment)
-
-                        if candidate_route.getCost() > self.best_route.getCost():
-                            self._tabu_list.append(move)
-                            continue
-
-                        # Mudanca de rota
-                        match heuristic:
-                            case Heuristic.SWAP:
-                                SwapCalculateRoute(candidate_route, i, j)
-                            case Heuristic.TWOOPT:
-                                TwoOPTCalculateRoute(candidate_route, i, j)
-                            case Heuristic.OROPT:
-                                OrOPTCalculateRoute(candidate_route, i, j, segment)
-
-                        self.best_route = copy(candidate_route)
-                        self._iteration = 0
-
-    def tabuSearchN(self):
-        # seed(42)
-        candidate_routes = self.neighborhood(
-            self.best_route, 10, self.best_route.getCost()
-        )
-        c_s, c_t, c_o = 0, 0, 0
-        while not self.isStop():
-            for c, candidate_route in enumerate(candidate_routes):
-                for i in range(1, len(candidate_route._route) - 1 - 1 - 1):
-                    for j in range(i + 1, len(candidate_route._route) - 1 - 1):
-                        for heuristic in range(0, 3):
-                            heuristic = Heuristic(heuristic)
-                            # segment = randint(0, min(2, j - i - 1))
-                            segment = 0
-                            # heuristic = Heuristic(randint(0, 2))
-                            move = Move(heuristic, i, j, segment)
-
-                            self._iteration += 1
-
-                            if move in self._tabu_list:
-                                continue
-
-                            temp_candidate_route = copy(candidate_route)
-
-                            # Pesquisa do custo
-                            match heuristic:
-                                case Heuristic.SWAP:
-                                    SwapCalculateCost(temp_candidate_route, i, j)
-                                case Heuristic.TWOOPT:
-                                    TwoOPTCalculateCost(temp_candidate_route, i, j)
-                                case Heuristic.OROPT:
-                                    OrOPTCalculateCost(
-                                        temp_candidate_route, i, j, segment
-                                    )
-
-                            if (
-                                temp_candidate_route.getCost()
-                                > candidate_route.getCost()
-                            ):
-                                self._tabu_list.append(move)
-                                continue
-
-                            # Mudanca de rota
-                            match heuristic:
-                                case Heuristic.SWAP:
-                                    SwapCalculateRoute(temp_candidate_route, i, j)
-                                    c_s += 1
-                                case Heuristic.TWOOPT:
-                                    TwoOPTCalculateRoute(temp_candidate_route, i, j)
-                                    c_t += 1
-                                case Heuristic.OROPT:
-                                    OrOPTCalculateRoute(
-                                        temp_candidate_route, i, j, segment
-                                    )
-                                    c_o += 1
-
-                            candidate_routes[c] = copy(temp_candidate_route)
-                            self._iteration = 0
-
-        self.best_route = min(enumerate(candidate_routes), key=lambda n: n[i].getCost())
-        print(c_s, c_t, c_o)
-
-    def tabuSearchLS(self):
-        candidate_routes = self.neighborhood(
-            self.best_route, 10, self.best_route.getCost()
-        )
-
-        c_t = 0
-        for candidate_index, candidate_route in enumerate(candidate_routes):
-            while not self.isStop():
-                for i in range(1, len(candidate_route._route) - 1 - 1): 
-                    j = randint(1, len(candidate_route._route) - 1 - 1)
-
-                    if i == j:
-                        continue
-
-                    # heuristics = [Heuristic.SWAP, Heuristic.TWOOPT, Heuristic.OROPT]
-                    heuristics = [Heuristic.TWOOPT]
-
-                    while heuristics:
-                        heuristic = heuristics.pop(randrange(len(heuristics)))
-
-                        self._iteration += 1
-
-                        # verificar se é tabu
-
-                        node_i, node_j = i, j
-                        if not heuristic.OROPT and j < i:
-                            node_i, node_j = j, i
-
-                        # Pesquisa do custo
-                        match heuristic:
-                            case Heuristic.SWAP:
-                                cost = SwapCalculateCost(copy(candidate_route), node_i, node_j)
-                            case Heuristic.TWOOPT:
-                                cost = TwoOPTCalculateCost(copy(candidate_route), node_i, node_j)
-                            case Heuristic.OROPT:
-                                cost = OrOPTCalculateCost(copy(candidate_route), node_i, node_j)
-
-                        # if neighbor_route.getCost() > limit:
-                        if cost > candidate_route.getCost():
-                            # self._tabu_list.append(move)
-                            # adicionar rota a lista tabu
-                            continue
-
-                        # Atualização do custo
-                        candidate_route._cost = cost
-
-                        # Mudanca de rota
-                        route = List[Node]
-                        match heuristic:
-                            case Heuristic.SWAP:
-                                candidate_route = SwapCalculateRoute(copy(candidate_route), node_i, node_j)
-                            case Heuristic.TWOOPT:
-                                route = TwoOPTCalculateRoute(copy(candidate_route), node_i, node_j)
-                                c_t += 1
-                            case Heuristic.OROPT:
-                                candidate_route = OrOPTCalculateRoute(copy(candidate_route), node_i, node_j)
-                        
-                        candidate_route._route = route
-                        
-                        self._iteration = 0
-                    
-        self.best_route = min(enumerate(candidate_routes), key=lambda n: n[1].getCost())
-        # self.best_route = candidate_route
-        print(c_t)
-
-    def neighborhood(
-        self, route: Route, qtd_candidates: int, limit=maxsize
-    ) -> List[Route]:
-        candidate_routes: List[Route] = [route] * qtd_candidates
-        qtd_de_melhorias = [0] * qtd_candidates
-
-        for candidate_index, candidate_route in enumerate(candidate_routes):
-            for i in range(1, len(candidate_route._route) - 1):
-                j = randint(1, len(candidate_route._route) - 1 - 1)
+            for i in range(1, len(self.best_route._route) - 1):
+                j = randint(1, len(self.best_route._route) - 1 - 1)
 
                 if i == j:
                     continue
 
                 heuristics = [Heuristic.SWAP, Heuristic.TWOOPT, Heuristic.OROPT]
+                # heuristics = [Heuristic.TWOOPT]
 
                 while heuristics:
                     heuristic = heuristics.pop(randrange(len(heuristics)))
+                    self._iteration += 1
 
-                    # verificar se é tabu
+                    move = Move(self.best_route, heuristic, i, j)
+                    if move in self._tabu_list:
+                        continue
 
                     node_i, node_j = i, j
-                    if not heuristic.OROPT and j < i:
+                    if heuristic != Heuristic.OROPT and j < i:
                         node_i, node_j = j, i
-
-                    cost = maxsize
-
-                    neighbor_route = copy(candidate_route)
 
                     # Pesquisa do custo
                     match heuristic:
                         case Heuristic.SWAP:
-                            cost = SwapCalculateCost(copy(neighbor_route), node_i, node_j)
+                            cost = SwapCalculateCost(self.best_route, node_i, node_j)
                         case Heuristic.TWOOPT:
-                            cost = TwoOPTCalculateCost(copy(neighbor_route), node_i, node_j)
+                            cost = TwoOPTCalculateCost(self.best_route, node_i, node_j)
                         case Heuristic.OROPT:
-                            cost = OrOPTCalculateCost(copy(neighbor_route), node_i, node_j)
+                            cost = OrOPTCalculateCost(self.best_route, node_i, node_j)
 
-                    # if neighbor_route.getCost() > limit:
-                    if cost > candidate_route.getCost():
-                        # self._tabu_list.append(move)
-                        # adicionar rota a lista tabu
+                    # if cost > limit:
+                    if cost > self.best_route.getCost():
+                        self._tabu_list.append(move)
                         continue
 
                     # Atualização do custo
-                    candidate_route._cost = cost
+                    self.best_route._cost = cost
 
-                    rroute = Route()
-
-                    # Mudanca de rota
                     match heuristic:
                         case Heuristic.SWAP:
-                            rroute = SwapCalculateRoute(copy(candidate_route), node_i, node_j)
-                            qtd_de_melhorias[candidate_index] += 1
+                            route = SwapCalculateRoute(self.best_route, node_i, node_j)
+                            num_swap += 1
                         case Heuristic.TWOOPT:
-                            rroute = TwoOPTCalculateRoute(copy(candidate_route), node_i, node_j)
-                            qtd_de_melhorias[candidate_index] += 1
+                            route = TwoOPTCalculateRoute(
+                                self.best_route, node_i, node_j
+                            )
+                            num_twoopt += 1
                         case Heuristic.OROPT:
-                            rroute = OrOPTCalculateRoute(copy(candidate_route), node_i, node_j)
-                            qtd_de_melhorias[candidate_index] += 1
-                    
-                    candidate_route._route = rroute._route
+                            route = OrOPTCalculateRoute(self.best_route, node_i, node_j)
+                            num_oropt += 1
 
-        print(qtd_de_melhorias)
-        return candidate_routes
+                    self.best_route._route = route
+                    self._iteration = 0
+
+        print(num_swap, num_twoopt, num_oropt)
 
     def isStop(self) -> bool:
         # return True
@@ -329,14 +118,11 @@ class TabuSearch:
         return self.best_route
 
 
-class Heuristic(Enum):
-    SWAP = 0
-    TWOOPT = 1
-    OROPT = 2
-
-
 class Move:
-    def __init__(self, heuristic, i, j, segment=None) -> None:
+    def __init__(
+        self, route: Route, heuristic: Heuristic, i: int, j: int, segment=None
+    ) -> None:
+        self.route = route
         self.heuristic = heuristic
         self.i = i
         self.j = j
@@ -355,7 +141,7 @@ class TabuList:
             # self._tabu_list.pop(self._tabu_list.values()[0]) # Abordagem que remove o primeiro elemento
 
         if move.heuristic != Heuristic.OROPT:
-            move = Move(move.heuristic, move.i, move.j)
+            move = Move(move.route, move.heuristic, move.i, move.j)
 
         self._tabu_list[move] = True
 
@@ -363,4 +149,4 @@ class TabuList:
         if move.heuristic == Heuristic.OROPT:
             return move in self._tabu_list
 
-        return (move.heuristic, move.i, move.j) in self._tabu_list
+        return Move(move.route, move.heuristic, move.i, move.j) in self._tabu_list
