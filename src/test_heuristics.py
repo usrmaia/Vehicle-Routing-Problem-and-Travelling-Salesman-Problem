@@ -1,3 +1,4 @@
+from time import time
 import pytest
 from random import seed
 from typing import List
@@ -6,6 +7,7 @@ from inputDataFrame import DataFrame
 from node import Node
 from route import Route
 from tabuSearch import TabuSearch
+from tabulate import tabulate
 
 
 lower_bound = 40.59
@@ -40,7 +42,8 @@ random_nodes: List[Node] = [
 def testRandomInsertion():
     seed(42)
 
-    route: Route = RandomInsertion(nodes.copy())
+    graph = Graph()
+    route: Route = RandomInsertion(nodes.copy(), graph)
 
     assert route._route[0] == nodes[0]
     assert route._route[-1] == nodes[0]
@@ -71,7 +74,8 @@ nearest_nodes: List[Node] = [
 def testNearestNeighbor():
     seed(42)
 
-    route: Route = NearestNeighbor(nodes.copy())
+    graph = Graph()
+    route: Route = NearestNeighbor(nodes.copy(), graph)
 
     assert route._route[0] == nodes[0]
     assert route._route[-1] == nodes[0]
@@ -85,6 +89,7 @@ def testNearestNeighbor():
 
 def testSwapCalculateCost():
     # Caso i e j, primeiro cliente e cliente consecutivo
+    graph = Graph()
 
     route_swap0 = Route()
     route_swap0._route = [
@@ -100,7 +105,7 @@ def testSwapCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_swap0.calculateTotalCost()
+    route_swap0.calculateTotalCost(graph)
 
     route_swap1 = Route()
     route_swap1._route = [
@@ -116,13 +121,14 @@ def testSwapCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_swap1.calculateTotalCost()
+    route_swap1.calculateTotalCost(graph)
 
     i, j = 1, 2
-    route_swap0 = SwapCalculateCost(route_swap0, i, j)
+    route_swap0 = SwapCalculateCost(route_swap0, i, j, graph)
     assert round(route_swap0, 4) == round(route_swap1.getCost(), 4)
 
     # Caso i e j, primeiro cliente e cliente qualquer
+    graph = Graph()
 
     route_swap0 = Route()
     route_swap0._route = [
@@ -138,7 +144,7 @@ def testSwapCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_swap0.calculateTotalCost()
+    route_swap0.calculateTotalCost(graph)
 
     route_swap1 = Route()
     route_swap1._route = [
@@ -154,13 +160,14 @@ def testSwapCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_swap1.calculateTotalCost()
+    route_swap1.calculateTotalCost(graph)
 
     i, j = 1, 6
-    route_swap0 = SwapCalculateCost(route_swap0, i, j)
+    route_swap0 = SwapCalculateCost(route_swap0, i, j, graph)
     assert round(route_swap0, 4) == round(route_swap1.getCost(), 4)
 
     # Caso i e j, primeiro cliente e último cliente
+    graph = Graph()
 
     route_swap0 = Route()
     route_swap0._route = [
@@ -176,7 +183,7 @@ def testSwapCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_swap0.calculateTotalCost()
+    route_swap0.calculateTotalCost(graph)
 
     route_swap1 = Route()
     route_swap1._route = [
@@ -192,13 +199,14 @@ def testSwapCalculateCost():
         Node(2, 0, 4),
         Node(1, 5, 5),
     ]
-    route_swap1.calculateTotalCost()
+    route_swap1.calculateTotalCost(graph)
 
     i, j = 1, 9
-    route_swap0 = SwapCalculateCost(route_swap0, i, j)
+    route_swap0 = SwapCalculateCost(route_swap0, i, j, graph)
     assert round(route_swap0, 4) == round(route_swap1.getCost(), 4)
 
     # Caso i e j quaisquer, não consecutivos, nem primeiro e nem último cliente
+    graph = Graph()
 
     route_swap0 = Route()
     route_swap0._route = [
@@ -214,7 +222,7 @@ def testSwapCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_swap0.calculateTotalCost()
+    route_swap0.calculateTotalCost(graph)
 
     route_swap1 = Route()
     route_swap1._route = [
@@ -230,13 +238,14 @@ def testSwapCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_swap1.calculateTotalCost()
+    route_swap1.calculateTotalCost(graph)
 
     i, j = 2, 7
-    route_swap0 = SwapCalculateCost(route_swap0, i, j)
+    route_swap0 = SwapCalculateCost(route_swap0, i, j, graph)
     assert round(route_swap0, 4) == round(route_swap1.getCost(), 4)
 
     # Caso i e j quaisquer, consecutivos, nem primeiro e nem último cliente
+    graph = Graph()
 
     route_swap0 = Route()
     route_swap0._route = [
@@ -252,7 +261,7 @@ def testSwapCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_swap0.calculateTotalCost()
+    route_swap0.calculateTotalCost(graph)
 
     route_swap1 = Route()
     route_swap1._route = [
@@ -268,13 +277,14 @@ def testSwapCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_swap1.calculateTotalCost()
+    route_swap1.calculateTotalCost(graph)
 
     i, j = 4, 5
-    route_swap0 = SwapCalculateCost(route_swap0, i, j)
+    route_swap0 = SwapCalculateCost(route_swap0, i, j, graph)
     assert round(route_swap0, 4) == round(route_swap1.getCost(), 4)
 
     # Caso i e j, não consecutivos, cliente qualquer e último cliente
+    graph = Graph()
 
     route_swap0 = Route()
     route_swap0._route = [
@@ -290,7 +300,7 @@ def testSwapCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_swap0.calculateTotalCost()
+    route_swap0.calculateTotalCost(graph)
 
     route_swap1 = Route()
     route_swap1._route = [
@@ -306,13 +316,14 @@ def testSwapCalculateCost():
         Node(5, 10, 1),
         Node(1, 5, 5),
     ]
-    route_swap1.calculateTotalCost()
+    route_swap1.calculateTotalCost(graph)
 
     i, j = 4, 9
-    route_swap0 = SwapCalculateCost(route_swap0, i, j)
+    route_swap0 = SwapCalculateCost(route_swap0, i, j, graph)
     assert round(route_swap0, 4) == round(route_swap1.getCost(), 4)
 
     # Caso i e j, consecutivos, penúltimo cliente e último cliente
+    graph = Graph()
 
     route_swap0 = Route()
     route_swap0._route = [
@@ -328,7 +339,7 @@ def testSwapCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_swap0.calculateTotalCost()
+    route_swap0.calculateTotalCost(graph)
 
     route_swap1 = Route()
     route_swap1._route = [
@@ -344,15 +355,16 @@ def testSwapCalculateCost():
         Node(9, 10, 6),
         Node(1, 5, 5),
     ]
-    route_swap1.calculateTotalCost()
+    route_swap1.calculateTotalCost(graph)
 
     i, j = 8, 9
-    route_swap0 = SwapCalculateCost(route_swap0, i, j)
+    route_swap0 = SwapCalculateCost(route_swap0, i, j, graph)
     assert round(route_swap0, 4) == round(route_swap1.getCost(), 4)
 
 
 def testSwapCalculateRoute():
     # Caso i e j, primeiro cliente e cliente consecutivo
+    graph = Graph()
 
     route_swap0 = Route()
     route_swap0._route = [
@@ -368,7 +380,7 @@ def testSwapCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_swap0.calculateTotalCost()
+    route_swap0.calculateTotalCost(graph)
 
     route_swap1 = Route()
     route_swap1._route = [
@@ -384,13 +396,14 @@ def testSwapCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_swap1.calculateTotalCost()
+    route_swap1.calculateTotalCost(graph)
 
     i, j = 1, 2
     route_swap0 = SwapCalculateRoute(route_swap0, i, j)
     assert route_swap0 == route_swap1.getRoute()
 
     # Caso i e j, primeiro cliente e cliente qualquer
+    graph = Graph()
 
     route_swap0 = Route()
     route_swap0._route = [
@@ -406,7 +419,7 @@ def testSwapCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_swap0.calculateTotalCost()
+    route_swap0.calculateTotalCost(graph)
 
     route_swap1 = Route()
     route_swap1._route = [
@@ -422,13 +435,14 @@ def testSwapCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_swap1.calculateTotalCost()
+    route_swap1.calculateTotalCost(graph)
 
     i, j = 1, 6
     route_swap0 = SwapCalculateRoute(route_swap0, i, j)
     assert route_swap0 == route_swap1.getRoute()
 
     # Caso i e j, primeiro cliente e último cliente
+    graph = Graph()
 
     route_swap0 = Route()
     route_swap0._route = [
@@ -444,7 +458,7 @@ def testSwapCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_swap0.calculateTotalCost()
+    route_swap0.calculateTotalCost(graph)
 
     route_swap1 = Route()
     route_swap1._route = [
@@ -460,13 +474,14 @@ def testSwapCalculateRoute():
         Node(2, 0, 4),
         Node(1, 5, 5),
     ]
-    route_swap1.calculateTotalCost()
+    route_swap1.calculateTotalCost(graph)
 
     i, j = 1, 9
     route_swap0 = SwapCalculateRoute(route_swap0, i, j)
     assert route_swap0 == route_swap1.getRoute()
 
     # Caso i e j quaisquer, não consecutivos, nem primeiro e nem último cliente
+    graph = Graph()
 
     route_swap0 = Route()
     route_swap0._route = [
@@ -482,7 +497,7 @@ def testSwapCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_swap0.calculateTotalCost()
+    route_swap0.calculateTotalCost(graph)
 
     route_swap1 = Route()
     route_swap1._route = [
@@ -498,13 +513,14 @@ def testSwapCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_swap1.calculateTotalCost()
+    route_swap1.calculateTotalCost(graph)
 
     i, j = 2, 7
     route_swap0 = SwapCalculateRoute(route_swap0, i, j)
     assert route_swap0 == route_swap1.getRoute()
 
     # Caso i e j quaisquer, consecutivos, nem primeiro e nem último cliente
+    graph = Graph()
 
     route_swap0 = Route()
     route_swap0._route = [
@@ -520,7 +536,7 @@ def testSwapCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_swap0.calculateTotalCost()
+    route_swap0.calculateTotalCost(graph)
 
     route_swap1 = Route()
     route_swap1._route = [
@@ -536,13 +552,14 @@ def testSwapCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_swap1.calculateTotalCost()
+    route_swap1.calculateTotalCost(graph)
 
     i, j = 4, 5
     route_swap0 = SwapCalculateRoute(route_swap0, i, j)
     assert route_swap0 == route_swap1.getRoute()
 
     # Caso i e j, não consecutivos, cliente qualquer e último cliente
+    graph = Graph()
 
     route_swap0 = Route()
     route_swap0._route = [
@@ -558,7 +575,7 @@ def testSwapCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_swap0.calculateTotalCost()
+    route_swap0.calculateTotalCost(graph)
 
     route_swap1 = Route()
     route_swap1._route = [
@@ -574,13 +591,14 @@ def testSwapCalculateRoute():
         Node(5, 10, 1),
         Node(1, 5, 5),
     ]
-    route_swap1.calculateTotalCost()
+    route_swap1.calculateTotalCost(graph)
 
     i, j = 4, 9
     route_swap0 = SwapCalculateRoute(route_swap0, i, j)
     assert route_swap0 == route_swap1.getRoute()
 
     # Caso i e j, consecutivos, penúltimo cliente e último cliente
+    graph = Graph()
 
     route_swap0 = Route()
     route_swap0._route = [
@@ -596,7 +614,7 @@ def testSwapCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_swap0.calculateTotalCost()
+    route_swap0.calculateTotalCost(graph)
 
     route_swap1 = Route()
     route_swap1._route = [
@@ -612,7 +630,7 @@ def testSwapCalculateRoute():
         Node(9, 10, 6),
         Node(1, 5, 5),
     ]
-    route_swap1.calculateTotalCost()
+    route_swap1.calculateTotalCost(graph)
 
     i, j = 8, 9
     route_swap0 = SwapCalculateRoute(route_swap0, i, j)
@@ -621,6 +639,7 @@ def testSwapCalculateRoute():
 
 def testTwoOPTCalculateCost():
     # Caso i e j, primeiro cliente e cliente consecutivo
+    graph = Graph()
 
     route_twoopt0 = Route()
     route_twoopt0._route = [
@@ -636,7 +655,7 @@ def testTwoOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_twoopt0.calculateTotalCost()
+    route_twoopt0.calculateTotalCost(graph)
 
     route_twoopt1 = Route()
     route_twoopt1._route = [
@@ -652,13 +671,14 @@ def testTwoOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_twoopt1.calculateTotalCost()
+    route_twoopt1.calculateTotalCost(graph)
 
     i, j = 1, 2
-    route_twoopt0 = TwoOPTCalculateCost(route_twoopt0, i, j)
+    route_twoopt0 = TwoOPTCalculateCost(route_twoopt0, i, j, graph)
     assert round(route_twoopt0, 4) == round(route_twoopt1.getCost(), 4)
 
     # Caso i e j, primeiro cliente e cliente não consecutivo
+    graph = Graph()
 
     route_twoopt0 = Route()
     route_twoopt0._route = [
@@ -674,7 +694,7 @@ def testTwoOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_twoopt0.calculateTotalCost()
+    route_twoopt0.calculateTotalCost(graph)
 
     route_twoopt1 = Route()
     route_twoopt1._route = [
@@ -690,13 +710,14 @@ def testTwoOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_twoopt1.calculateTotalCost()
+    route_twoopt1.calculateTotalCost(graph)
 
     i, j = 1, 5
-    route_twoopt0 = TwoOPTCalculateCost(route_twoopt0, i, j)
+    route_twoopt0 = TwoOPTCalculateCost(route_twoopt0, i, j, graph)
     assert round(route_twoopt0, 4) == round(route_twoopt1.getCost(), 4)
 
     # Caso i e j, primeiro cliente e último cliente
+    graph = Graph()
 
     route_twoopt0 = Route()
     route_twoopt0._route = [
@@ -712,7 +733,7 @@ def testTwoOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_twoopt0.calculateTotalCost()
+    route_twoopt0.calculateTotalCost(graph)
 
     route_twoopt1 = Route()
     route_twoopt1._route = [
@@ -728,13 +749,14 @@ def testTwoOPTCalculateCost():
         Node(2, 0, 4),
         Node(1, 5, 5),
     ]
-    route_twoopt1.calculateTotalCost()
+    route_twoopt1.calculateTotalCost(graph)
 
     i, j = 1, 9
-    route_twoopt0 = TwoOPTCalculateCost(route_twoopt0, i, j)
+    route_twoopt0 = TwoOPTCalculateCost(route_twoopt0, i, j, graph)
     assert round(route_twoopt0, 4) == round(route_twoopt1.getCost(), 4)
 
     # Caso i e j, não consecutivo, clientes quaisquer
+    graph = Graph()
 
     route_twoopt0 = Route()
     route_twoopt0._route = [
@@ -750,7 +772,7 @@ def testTwoOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_twoopt0.calculateTotalCost()
+    route_twoopt0.calculateTotalCost(graph)
 
     route_twoopt1 = Route()
     route_twoopt1._route = [
@@ -766,13 +788,14 @@ def testTwoOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_twoopt1.calculateTotalCost()
+    route_twoopt1.calculateTotalCost(graph)
 
     i, j = 2, 7
-    route_twoopt0 = TwoOPTCalculateCost(route_twoopt0, i, j)
+    route_twoopt0 = TwoOPTCalculateCost(route_twoopt0, i, j, graph)
     assert round(route_twoopt0, 4) == round(route_twoopt1.getCost(), 4)
 
     # Caso i e j, clientes quaisquer consecutivos
+    graph = Graph()
 
     route_twoopt0 = Route()
     route_twoopt0._route = [
@@ -788,7 +811,7 @@ def testTwoOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_twoopt0.calculateTotalCost()
+    route_twoopt0.calculateTotalCost(graph)
 
     route_twoopt1 = Route()
     route_twoopt1._route = [
@@ -804,13 +827,14 @@ def testTwoOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_twoopt1.calculateTotalCost()
+    route_twoopt1.calculateTotalCost(graph)
 
     i, j = 4, 5
-    route_twoopt0 = TwoOPTCalculateCost(route_twoopt0, i, j)
+    route_twoopt0 = TwoOPTCalculateCost(route_twoopt0, i, j, graph)
     assert round(route_twoopt0, 4) == round(route_twoopt1.getCost(), 4)
 
     # Caso i e j, cliente qualquer e último cliente
+    graph = Graph()
 
     route_twoopt0 = Route()
     route_twoopt0._route = [
@@ -826,7 +850,7 @@ def testTwoOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_twoopt0.calculateTotalCost()
+    route_twoopt0.calculateTotalCost(graph)
 
     route_twoopt1 = Route()
     route_twoopt1._route = [
@@ -842,13 +866,14 @@ def testTwoOPTCalculateCost():
         Node(6, 2, 8),
         Node(1, 5, 5),
     ]
-    route_twoopt1.calculateTotalCost()
+    route_twoopt1.calculateTotalCost(graph)
 
     i, j = 5, 9
-    route_twoopt0 = TwoOPTCalculateCost(route_twoopt0, i, j)
+    route_twoopt0 = TwoOPTCalculateCost(route_twoopt0, i, j, graph)
     assert round(route_twoopt0, 4) == round(route_twoopt1.getCost(), 4)
 
     # Caso i e j, penúltimo cliente e último cliente
+    graph = Graph()
 
     route_twoopt0 = Route()
     route_twoopt0._route = [
@@ -864,7 +889,7 @@ def testTwoOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_twoopt0.calculateTotalCost()
+    route_twoopt0.calculateTotalCost(graph)
 
     route_twoopt1 = Route()
     route_twoopt1._route = [
@@ -880,15 +905,16 @@ def testTwoOPTCalculateCost():
         Node(9, 10, 6),
         Node(1, 5, 5),
     ]
-    route_twoopt1.calculateTotalCost()
+    route_twoopt1.calculateTotalCost(graph)
 
     i, j = 8, 9
-    route_twoopt0 = TwoOPTCalculateCost(route_twoopt0, i, j)
+    route_twoopt0 = TwoOPTCalculateCost(route_twoopt0, i, j, graph)
     assert round(route_twoopt0, 4) == round(route_twoopt1.getCost(), 4)
 
 
 def testTwoOPTCalculateRoute():
     # Caso i e j, primeiro cliente e cliente consecutivo
+    graph = Graph()
 
     route_twoopt0 = Route()
     route_twoopt0._route = [
@@ -904,7 +930,7 @@ def testTwoOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_twoopt0.calculateTotalCost()
+    route_twoopt0.calculateTotalCost(graph)
 
     route_twoopt1 = Route()
     route_twoopt1._route = [
@@ -920,13 +946,14 @@ def testTwoOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_twoopt1.calculateTotalCost()
+    route_twoopt1.calculateTotalCost(graph)
 
     i, j = 1, 2
     route_twoopt0 = TwoOPTCalculateRoute(route_twoopt0, i, j)
     assert route_twoopt0 == route_twoopt1.getRoute()
 
     # Caso i e j, primeiro cliente e cliente não consecutivo
+    graph = Graph()
 
     route_twoopt0 = Route()
     route_twoopt0._route = [
@@ -942,7 +969,7 @@ def testTwoOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_twoopt0.calculateTotalCost()
+    route_twoopt0.calculateTotalCost(graph)
 
     route_twoopt1 = Route()
     route_twoopt1._route = [
@@ -958,13 +985,14 @@ def testTwoOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_twoopt1.calculateTotalCost()
+    route_twoopt1.calculateTotalCost(graph)
 
     i, j = 1, 5
     route_twoopt0 = TwoOPTCalculateRoute(route_twoopt0, i, j)
     assert route_twoopt0 == route_twoopt1.getRoute()
 
     # Caso i e j, primeiro cliente e último cliente
+    graph = Graph()
 
     route_twoopt0 = Route()
     route_twoopt0._route = [
@@ -980,7 +1008,7 @@ def testTwoOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_twoopt0.calculateTotalCost()
+    route_twoopt0.calculateTotalCost(graph)
 
     route_twoopt1 = Route()
     route_twoopt1._route = [
@@ -996,13 +1024,14 @@ def testTwoOPTCalculateRoute():
         Node(2, 0, 4),
         Node(1, 5, 5),
     ]
-    route_twoopt1.calculateTotalCost()
+    route_twoopt1.calculateTotalCost(graph)
 
     i, j = 1, 9
     route_twoopt0 = TwoOPTCalculateRoute(route_twoopt0, i, j)
     assert route_twoopt0 == route_twoopt1.getRoute()
 
     # Caso i e j, não consecutivo, clientes quaisquer
+    graph = Graph()
 
     route_twoopt0 = Route()
     route_twoopt0._route = [
@@ -1018,7 +1047,7 @@ def testTwoOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_twoopt0.calculateTotalCost()
+    route_twoopt0.calculateTotalCost(graph)
 
     route_twoopt1 = Route()
     route_twoopt1._route = [
@@ -1034,13 +1063,14 @@ def testTwoOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_twoopt1.calculateTotalCost()
+    route_twoopt1.calculateTotalCost(graph)
 
     i, j = 2, 7
     route_twoopt0 = TwoOPTCalculateRoute(route_twoopt0, i, j)
     assert route_twoopt0 == route_twoopt1.getRoute()
 
     # Caso i e j, clientes quaisquer consecutivos
+    graph = Graph()
 
     route_twoopt0 = Route()
     route_twoopt0._route = [
@@ -1056,7 +1086,7 @@ def testTwoOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_twoopt0.calculateTotalCost()
+    route_twoopt0.calculateTotalCost(graph)
 
     route_twoopt1 = Route()
     route_twoopt1._route = [
@@ -1072,13 +1102,14 @@ def testTwoOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_twoopt1.calculateTotalCost()
+    route_twoopt1.calculateTotalCost(graph)
 
     i, j = 4, 5
     route_twoopt0 = TwoOPTCalculateRoute(route_twoopt0, i, j)
     assert route_twoopt0 == route_twoopt1.getRoute()
 
     # Caso i e j, cliente qualquer e último cliente
+    graph = Graph()
 
     route_twoopt0 = Route()
     route_twoopt0._route = [
@@ -1094,7 +1125,7 @@ def testTwoOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_twoopt0.calculateTotalCost()
+    route_twoopt0.calculateTotalCost(graph)
 
     route_twoopt1 = Route()
     route_twoopt1._route = [
@@ -1110,13 +1141,14 @@ def testTwoOPTCalculateRoute():
         Node(6, 2, 8),
         Node(1, 5, 5),
     ]
-    route_twoopt1.calculateTotalCost()
+    route_twoopt1.calculateTotalCost(graph)
 
     i, j = 5, 9
     route_twoopt0 = TwoOPTCalculateRoute(route_twoopt0, i, j)
     assert route_twoopt0 == route_twoopt1.getRoute()
 
     # Caso i e j, penúltimo cliente e último cliente
+    graph = Graph()
 
     route_twoopt0 = Route()
     route_twoopt0._route = [
@@ -1132,7 +1164,7 @@ def testTwoOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_twoopt0.calculateTotalCost()
+    route_twoopt0.calculateTotalCost(graph)
 
     route_twoopt1 = Route()
     route_twoopt1._route = [
@@ -1148,7 +1180,7 @@ def testTwoOPTCalculateRoute():
         Node(9, 10, 6),
         Node(1, 5, 5),
     ]
-    route_twoopt1.calculateTotalCost()
+    route_twoopt1.calculateTotalCost(graph)
 
     i, j = 8, 9
     route_twoopt0 = TwoOPTCalculateRoute(route_twoopt0, i, j)
@@ -1157,6 +1189,7 @@ def testTwoOPTCalculateRoute():
 
 def testOrOPTCalculateCost():
     # Caso i < j, primeiro cliente e cliente consecutivo sem segmento
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -1172,7 +1205,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -1188,13 +1221,14 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 1, 2, 0
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i < j, primeiro cliente e cliente consecutivo com segmento 1
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -1210,7 +1244,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -1226,13 +1260,14 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 1, 3, 1
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i < j, primeiro cliente e cliente consecutivo com segmento 2
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -1248,7 +1283,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -1264,13 +1299,14 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 1, 4, 2
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i < j, primeiro cliente e cliente qualquer sem segmento
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -1286,7 +1322,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -1302,13 +1338,14 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 1, 6, 0
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i < j, primeiro cliente e cliente qualquer com segmento 1
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -1324,7 +1361,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -1340,13 +1377,14 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 1, 7, 1
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i < j, primeiro cliente e cliente qualquer com segmento 2
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -1362,7 +1400,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -1378,13 +1416,14 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 1, 6, 2
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i < j, primeiro cliente e último cliente sem segmento
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -1400,7 +1439,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -1416,13 +1455,14 @@ def testOrOPTCalculateCost():
         Node(2, 0, 4),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 1, 9, 0
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i < j, primeiro cliente e último cliente com segmento 1
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -1438,7 +1478,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -1454,13 +1494,14 @@ def testOrOPTCalculateCost():
         Node(3, 2, 0),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 1, 9, 1
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i < j, primeiro cliente e último cliente com segmento 2
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -1476,7 +1517,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -1492,13 +1533,14 @@ def testOrOPTCalculateCost():
         Node(4, 5, 1),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 1, 9, 2
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i < j, não consecutivo, clientes quaisquer, sem segmento
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -1514,7 +1556,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -1530,13 +1572,14 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 3, 6, 0
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i < j, não consecutivo, clientes quaisquer, com segmento 1
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -1552,7 +1595,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -1568,13 +1611,14 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 2, 7, 1
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i < j, não consecutivo, clientes quaisquer, com segmento 2
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -1590,7 +1634,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -1606,13 +1650,14 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 3, 7, 2
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i < j, consecutivo, clientes quaisquer, sem segmento
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -1628,7 +1673,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -1644,13 +1689,14 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 5, 6, 0
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i < j, consecutivo, clientes quaisquer, com segmento 1
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -1666,7 +1712,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -1682,13 +1728,14 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 5, 7, 1
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i < j, consecutivo, clientes quaisquer, com segmento 2
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -1704,7 +1751,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -1720,13 +1767,14 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 2, 5, 2
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i < j, penúltimo cliente e último cliente sem segmento
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -1742,7 +1790,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -1758,13 +1806,14 @@ def testOrOPTCalculateCost():
         Node(9, 10, 6),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 8, 9, 0
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i < j, triúltimo cliente e último cliente com segmento 1
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -1780,7 +1829,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -1796,13 +1845,14 @@ def testOrOPTCalculateCost():
         Node(9, 10, 6),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 7, 9, 1
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i < j, quatroúltimo cliente e último cliente com segmento 2
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -1818,7 +1868,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -1834,13 +1884,14 @@ def testOrOPTCalculateCost():
         Node(9, 10, 6),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 6, 9, 2
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i < j, último cliente e cliente qualquer sem segmento
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -1856,7 +1907,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -1872,13 +1923,14 @@ def testOrOPTCalculateCost():
         Node(6, 2, 8),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 5, 9, 0
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i < j, último cliente e cliente qualquer com segmento 1
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -1894,7 +1946,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -1910,13 +1962,14 @@ def testOrOPTCalculateCost():
         Node(6, 2, 8),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 4, 9, 1
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i < j, primeiro cliente e cliente qualquer com segmento 2
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -1932,7 +1985,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -1948,15 +2001,16 @@ def testOrOPTCalculateCost():
         Node(6, 2, 8),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 3, 9, 2
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     #
 
     # Caso i > j, primeiro cliente e cliente consecutivo sem segmento
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -1972,7 +2026,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -1988,13 +2042,14 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 2, 1, 0
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i > j, primeiro cliente e cliente consecutivo com segmento 1
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -2010,7 +2065,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -2026,13 +2081,14 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 3, 1, 1
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i > j, primeiro cliente e cliente consecutivo com segmento 2
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -2048,7 +2104,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -2064,13 +2120,14 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 4, 1, 2
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i > j, primeiro cliente e cliente qualquer sem segmento
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -2086,7 +2143,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -2102,13 +2159,14 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 6, 1, 0
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i > j, primeiro cliente e cliente qualquer com segmento 1
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -2124,7 +2182,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -2140,13 +2198,14 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 7, 1, 1
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i > j, primeiro cliente e cliente qualquer com segmento 2
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -2162,7 +2221,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -2178,13 +2237,14 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 6, 1, 2
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i > j, primeiro cliente e último cliente sem segmento
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -2200,7 +2260,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -2216,13 +2276,14 @@ def testOrOPTCalculateCost():
         Node(9, 10, 6),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 9, 1, 0
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i > j, primeiro cliente e penúltimo cliente com segmento 1
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -2238,7 +2299,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -2254,13 +2315,14 @@ def testOrOPTCalculateCost():
         Node(8, 7, 7),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 8, 1, 1
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i > j, primeiro cliente e triúltimo cliente com segmento 2
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -2276,7 +2338,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -2292,13 +2354,14 @@ def testOrOPTCalculateCost():
         Node(7, 6, 10),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 7, 1, 2
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i > j, não consecutivo, clientes quaisquer, sem segmento
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -2314,7 +2377,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -2330,13 +2393,14 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 6, 3, 0
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i > j, não consecutivo, clientes quaisquer, com segmento 1
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -2352,7 +2416,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -2368,13 +2432,14 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 7, 2, 1
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i > j, não consecutivo, clientes quaisquer, com segmento 2
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -2390,7 +2455,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -2406,13 +2471,14 @@ def testOrOPTCalculateCost():
         Node(7, 6, 10),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 7, 3, 2
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i > j, consecutivo, clientes quaisquer, sem segmento
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -2428,7 +2494,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -2444,13 +2510,14 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 6, 5, 0
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i > j, consecutivo, clientes quaisquer, com segmento 1
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -2466,7 +2533,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -2482,13 +2549,14 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 7, 5, 1
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i > j, consecutivo, clientes quaisquer, com segmento 2
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -2504,7 +2572,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -2520,13 +2588,14 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 5, 2, 2
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i > j, penúltimo cliente e último cliente sem segmento
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -2542,7 +2611,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -2558,13 +2627,14 @@ def testOrOPTCalculateCost():
         Node(9, 10, 6),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 9, 8, 0
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i > j, triúltimo cliente e penúltimo cliente com segmento 1
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -2580,7 +2650,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -2596,13 +2666,14 @@ def testOrOPTCalculateCost():
         Node(8, 7, 7),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 8, 7, 1
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i > j, quatroúltimo cliente e triúltimo cliente com segmento 2
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -2618,7 +2689,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -2634,13 +2705,14 @@ def testOrOPTCalculateCost():
         Node(7, 6, 10),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 7, 6, 2
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i > j, último cliente e cliente qualquer sem segmento
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -2656,7 +2728,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -2672,13 +2744,14 @@ def testOrOPTCalculateCost():
         Node(9, 10, 6),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 9, 5, 0
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i > j, penúltimo cliente e cliente qualquer com segmento 1
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -2694,7 +2767,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -2710,13 +2783,14 @@ def testOrOPTCalculateCost():
         Node(8, 7, 7),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 8, 4, 1
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
     # Caso i > j, triúltimo cliente e cliente qualquer com segmento 1
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -2732,7 +2806,7 @@ def testOrOPTCalculateCost():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -2748,15 +2822,16 @@ def testOrOPTCalculateCost():
         Node(7, 6, 10),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 7, 3, 2
-    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, s)
+    route_oropt0 = OrOPTCalculateCost(route_oropt0, i, j, graph, s)
     assert round(route_oropt0, 4) == round(route_oropt1.getCost(), 4)
 
 
 def testOrOPTCalculateRoute():
     # Caso i < j, primeiro cliente e cliente consecutivo sem segmento
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -2772,7 +2847,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -2788,13 +2863,14 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 1, 2, 0
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, primeiro cliente e cliente consecutivo com segmento 1
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -2810,7 +2886,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -2826,13 +2902,14 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 1, 3, 1
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, primeiro cliente e cliente consecutivo com segmento 2
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -2848,7 +2925,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -2864,13 +2941,14 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 1, 4, 2
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, primeiro cliente e cliente qualquer sem segmento
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -2886,7 +2964,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -2902,13 +2980,14 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 1, 6, 0
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, primeiro cliente e cliente qualquer com segmento 1
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -2924,7 +3003,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -2940,13 +3019,14 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 1, 7, 1
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, primeiro cliente e cliente qualquer com segmento 2
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -2962,7 +3042,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -2978,13 +3058,14 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 1, 6, 2
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, primeiro cliente e último cliente sem segmento
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -3000,7 +3081,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -3016,13 +3097,14 @@ def testOrOPTCalculateRoute():
         Node(2, 0, 4),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 1, 9, 0
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, primeiro cliente e último cliente com segmento 1
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -3038,7 +3120,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -3054,13 +3136,14 @@ def testOrOPTCalculateRoute():
         Node(3, 2, 0),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 1, 9, 1
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, primeiro cliente e último cliente com segmento 2
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -3076,7 +3159,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -3092,13 +3175,14 @@ def testOrOPTCalculateRoute():
         Node(4, 5, 1),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 1, 9, 2
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, não consecutivo, clientes quaisquer, sem segmento
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -3114,7 +3198,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -3130,13 +3214,14 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 3, 6, 0
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, não consecutivo, clientes quaisquer, com segmento 1
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -3152,7 +3237,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -3168,13 +3253,14 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 2, 7, 1
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, não consecutivo, clientes quaisquer, com segmento 2
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -3190,7 +3276,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -3206,13 +3292,14 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 3, 7, 2
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, consecutivo, clientes quaisquer, sem segmento
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -3228,7 +3315,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -3244,13 +3331,14 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 5, 6, 0
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, consecutivo, clientes quaisquer, com segmento 1
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -3266,7 +3354,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -3282,13 +3370,14 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 5, 7, 1
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, consecutivo, clientes quaisquer, com segmento 2
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -3304,7 +3393,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -3320,13 +3409,14 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 2, 5, 2
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, penúltimo cliente e último cliente sem segmento
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -3342,7 +3432,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -3358,13 +3448,14 @@ def testOrOPTCalculateRoute():
         Node(9, 10, 6),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 8, 9, 0
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, triúltimo cliente e último cliente com segmento 1
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -3380,7 +3471,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -3396,13 +3487,14 @@ def testOrOPTCalculateRoute():
         Node(9, 10, 6),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 7, 9, 1
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, quatroúltimo cliente e último cliente com segmento 2
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -3418,7 +3510,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -3434,13 +3526,14 @@ def testOrOPTCalculateRoute():
         Node(9, 10, 6),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 6, 9, 2
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, último cliente e cliente qualquer sem segmento
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -3456,7 +3549,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -3472,13 +3565,14 @@ def testOrOPTCalculateRoute():
         Node(6, 2, 8),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 5, 9, 0
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, último cliente e cliente qualquer com segmento 1
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -3494,7 +3588,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -3510,13 +3604,14 @@ def testOrOPTCalculateRoute():
         Node(6, 2, 8),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 4, 9, 1
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i < j, primeiro cliente e cliente qualquer com segmento 2
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -3532,7 +3627,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -3548,7 +3643,7 @@ def testOrOPTCalculateRoute():
         Node(6, 2, 8),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 3, 9, 2
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
@@ -3557,6 +3652,7 @@ def testOrOPTCalculateRoute():
     #
 
     # Caso i > j, primeiro cliente e cliente consecutivo sem segmento
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -3572,7 +3668,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -3588,13 +3684,14 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 2, 1, 0
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, primeiro cliente e cliente consecutivo com segmento 1
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -3610,7 +3707,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -3626,13 +3723,14 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 3, 1, 1
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, primeiro cliente e cliente consecutivo com segmento 2
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -3648,7 +3746,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -3664,13 +3762,14 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 4, 1, 2
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, primeiro cliente e cliente qualquer sem segmento
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -3686,7 +3785,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -3702,13 +3801,14 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 6, 1, 0
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, primeiro cliente e cliente qualquer com segmento 1
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -3724,7 +3824,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -3740,13 +3840,14 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 7, 1, 1
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, primeiro cliente e cliente qualquer com segmento 2
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -3762,7 +3863,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -3778,13 +3879,14 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 6, 1, 2
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, primeiro cliente e último cliente sem segmento
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -3800,7 +3902,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -3816,13 +3918,14 @@ def testOrOPTCalculateRoute():
         Node(9, 10, 6),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 9, 1, 0
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, primeiro cliente e penúltimo cliente com segmento 1
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -3838,7 +3941,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -3854,13 +3957,14 @@ def testOrOPTCalculateRoute():
         Node(8, 7, 7),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 8, 1, 1
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, primeiro cliente e triúltimo cliente com segmento 2
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -3876,7 +3980,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -3892,13 +3996,14 @@ def testOrOPTCalculateRoute():
         Node(7, 6, 10),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 7, 1, 2
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, não consecutivo, clientes quaisquer, sem segmento
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -3914,7 +4019,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -3930,13 +4035,14 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 6, 3, 0
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, não consecutivo, clientes quaisquer, com segmento 1
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -3952,7 +4058,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -3968,13 +4074,14 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 7, 2, 1
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, não consecutivo, clientes quaisquer, com segmento 2
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -3990,7 +4097,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -4006,13 +4113,14 @@ def testOrOPTCalculateRoute():
         Node(7, 6, 10),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 7, 3, 2
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, consecutivo, clientes quaisquer, sem segmento
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -4028,7 +4136,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -4044,13 +4152,14 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 6, 5, 0
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, consecutivo, clientes quaisquer, com segmento 1
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -4066,7 +4175,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -4082,13 +4191,14 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 7, 5, 1
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, consecutivo, clientes quaisquer, com segmento 2
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -4104,7 +4214,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -4120,13 +4230,14 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 5, 2, 2
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, penúltimo cliente e último cliente sem segmento
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -4142,7 +4253,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -4158,13 +4269,14 @@ def testOrOPTCalculateRoute():
         Node(9, 10, 6),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 9, 8, 0
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, triúltimo cliente e penúltimo cliente com segmento 1
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -4180,7 +4292,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -4196,13 +4308,14 @@ def testOrOPTCalculateRoute():
         Node(8, 7, 7),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 8, 7, 1
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, quatroúltimo cliente e triúltimo cliente com segmento 2
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -4218,7 +4331,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -4234,13 +4347,14 @@ def testOrOPTCalculateRoute():
         Node(7, 6, 10),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 7, 6, 2
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, último cliente e cliente qualquer sem segmento
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -4256,7 +4370,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -4272,13 +4386,14 @@ def testOrOPTCalculateRoute():
         Node(9, 10, 6),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 9, 5, 0
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, penúltimo cliente e cliente qualquer com segmento 1
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -4294,7 +4409,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -4310,13 +4425,14 @@ def testOrOPTCalculateRoute():
         Node(8, 7, 7),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 8, 4, 1
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
     assert route_oropt0 == route_oropt1.getRoute()
 
     # Caso i > j, triúltimo cliente e cliente qualquer com segmento 1
+    graph = Graph()
 
     route_oropt0 = Route()
     route_oropt0._route = [
@@ -4332,7 +4448,7 @@ def testOrOPTCalculateRoute():
         Node(10, 9, 9),
         Node(1, 5, 5),
     ]
-    route_oropt0.calculateTotalCost()
+    route_oropt0.calculateTotalCost(graph)
 
     route_oropt1 = Route()
     route_oropt1._route = [
@@ -4348,7 +4464,7 @@ def testOrOPTCalculateRoute():
         Node(7, 6, 10),
         Node(1, 5, 5),
     ]
-    route_oropt1.calculateTotalCost()
+    route_oropt1.calculateTotalCost(graph)
 
     i, j, s = 7, 3, 2
     route_oropt0 = OrOPTCalculateRoute(route_oropt0, i, j, s)
@@ -4367,7 +4483,7 @@ def testTabuSearch():
         ts = TabuSearch(nodes, lower_bound, 50, 4000 + 100 * len(nodes))
         route: Route = ts.best_route
 
-        assert round(route._cost, 2) == round(route.calculateTotalCost(), 2)
+        assert round(route._cost, 2) == round(route.calculateTotalCost(graph), 2)
 
 
 testRandomInsertion()
@@ -4378,4 +4494,4 @@ testTwoOPTCalculateCost()
 testTwoOPTCalculateRoute()
 testOrOPTCalculateCost()
 testOrOPTCalculateRoute()
-testTabuSearch()
+# testTabuSearch()
