@@ -6,12 +6,13 @@ from heuristics import *
 from route import Route
 from node import Node
 from inputDataFrame import DataFrame
-from showSolution import showSolution
+# from showSolution import showSolution
 
 time0 = time()
 nodes: List[Node]
 nodes, lower_bound = DataFrame(
-    "C:\\Users\\georg\\Codes\\Vehicle Routing Problem and Travelling Salesman Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
+    # "C:\\Users\\georg\\Codes\\Vehicle Routing Problem and Travelling Salesman Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
+    "C:\\Users\\konstroi.dev\\Codes\\Vehicle-Routing-Problem-and-Travelling-Salesman-Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
     # "/workspaces/Vehicle-Routing-Problem-and-Travelling-Salesman-Problem/Data Set/DIMACS-TSPLIB-Benchmark/my10.tsp"
 ).getDataFrame()
 time1 = time()

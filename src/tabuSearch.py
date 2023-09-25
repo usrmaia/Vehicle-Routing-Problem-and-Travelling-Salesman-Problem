@@ -30,6 +30,7 @@ class TabuSearch:
         self.intance_lower_bound = intance_lower_bound
 
         self.nodes = nodes
+        self.graph = Graph()
         self.best_route = Route()
 
         self.tabuSearch()
@@ -42,7 +43,7 @@ class TabuSearch:
                 case InitialSolutionHeuristics.RANDOMINSERTION:
                     candidates[i] = RandomInsertion(copy(self.nodes))
                 case InitialSolutionHeuristics.NEARESTNEIGHBOR:
-                    candidates[i] = NearestNeighbor(copy(self.nodes))
+                    candidates[i] = NearestNeighbor(copy(self.nodes), self.graph)
 
         _, best = min(enumerate(candidates), key=lambda n: n[1].getCost())
 
@@ -76,11 +77,11 @@ class TabuSearch:
                     # Pesquisa do custo
                     match heuristic:
                         case NeighborhoodHeuristic.SWAP:
-                            cost = SwapCalculateCost(self.best_route, node_i, node_j)
+                            cost = SwapCalculateCost(self.best_route, node_i, node_j, self.graph)
                         case NeighborhoodHeuristic.TWOOPT:
-                            cost = TwoOPTCalculateCost(self.best_route, node_i, node_j)
+                            cost = TwoOPTCalculateCost(self.best_route, node_i, node_j, self.graph)
                         case NeighborhoodHeuristic.OROPT:
-                            cost = OrOPTCalculateCost(self.best_route, node_i, node_j)
+                            cost = OrOPTCalculateCost(self.best_route, node_i, node_j, self.graph)
 
                     # if cost > limit:
                     if cost > self.best_route.getCost():
@@ -115,7 +116,7 @@ class TabuSearch:
         # return False
 
     def getRoute(self) -> Route:
-        self.best_route.calculateTotalCost()
+        self.best_route.calculateTotalCost(self.graph)
 
         return self.best_route
 
