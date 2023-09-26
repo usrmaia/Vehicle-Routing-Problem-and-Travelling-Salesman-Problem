@@ -1,6 +1,7 @@
 from copy import copy
 from typing import List
 from time import time
+from simulatedAnnealing import SimulatedAnnealing
 from tabuSearch import TabuSearch
 from heuristics import *
 from route import Route
@@ -20,6 +21,7 @@ print(f"Tempo de leitura do arquivo: {time1 - time0}...")
 print(f"lower_bound = {lower_bound}")
 
 time0 = time()
+"""
 route: Route = TabuSearch(
     nodes,
     lower_bound,
@@ -31,6 +33,20 @@ route: Route = TabuSearch(
         NeighborhoodHeuristic.TWOOPT,
         NeighborhoodHeuristic.OROPT,
     ],
+).getRoute()
+"""
+route: Route = SimulatedAnnealing(
+    nodes,
+    lower_bound,
+    2000,
+    InitialSolutionHeuristics.NEARESTNEIGHBOR,
+    [
+        NeighborhoodHeuristic.SWAP,
+        NeighborhoodHeuristic.TWOOPT,
+        NeighborhoodHeuristic.OROPT,
+    ],
+    1000,
+    0.95
 ).getRoute()
 time1 = time()
 print(f"Tempo de tabu dos nós: {time1 - time0}")

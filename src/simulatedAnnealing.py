@@ -1,8 +1,10 @@
 from copy import copy
-from random import choice, randint
+from math import exp
+from random import choice, randint, randrange
+import random
 from typing import List
 from graph import Graph
-from heuristics import InitialSolutionHeuristics, NearestNeighbor, NeighborhoodHeuristic, RandomInsertion
+from heuristics import InitialSolutionHeuristics, NearestNeighbor, NeighborhoodHeuristic, OrOPTCalculateCost, OrOPTCalculateRoute, RandomInsertion, SwapCalculateCost, SwapCalculateRoute, TwoOPTCalculateCost, TwoOPTCalculateRoute
 from node import Node
 from route import Route
 
@@ -62,19 +64,52 @@ class SimulatedAnnealing:
                 heuristics = copy(self.neighborhood_heuristics)
 
                 while len(heuristics) > 0:
-                    neighborhood_heuristic = choice(heuristics)
-                    heuristics.remove(neighborhood_heuristic)
+                    heuristic = heuristics.pop(randrange(len(heuristics)))
 
-                    new_route = neighborhood_heuristic(
-                        copy(self.best_route), i, j
-                    )
+                    node_i, node_j = i, j
+                    if heuristic != NeighborhoodHeuristic.OROPT and j < i:
+                        node_i, node_j = j, i
 
-                    if self.acceptanceProbability(new_route.getCost(), self.best_route.getCost()) > random():
-                        self.best_route = new_route
-                        break
+                    # Pesquisa do custo
+                    match heuristic:
+                        case NeighborhoodHeuristic.SWAP:
+                            cost = SwapCalculateCost(self.best_route, node_i, node_j, self.graph)
+                        case NeighborhoodHeuristic.TWOOPT:
+                            cost = TwoOPTCalculateCost(self.best_route, node_i, node_j, self.graph)
+                        case NeighborhoodHeuristic.OROPT:
+                            cost = OrOPTCalculateCost(self.best_route, node_i, node_j, self.graph)
 
+                    if self.acceptanceProbability(cost, self.best_route.getCost()):
+                        # Atualização do custo
+                        self.best_route._cost = cost
+
+                        match heuristic:
+                            case NeighborhoodHeuristic.SWAP:
+                                route = SwapCalculateRoute(self.best_route, node_i, node_j)
+                            case NeighborhoodHeuristic.TWOOPT:
+                                route = TwoOPTCalculateRoute(
+                                    self.best_route, node_i, node_j
+                                )
+                            case NeighborhoodHeuristic.OROPT:
+                                route = OrOPTCalculateRoute(self.best_route, node_i, node_j)
+                        
+                        self.best_route._route = route
+                    
             self._iteration += 1
     
+    def acceptanceProbability(self, new_cost: float, old_cost: float) -> bool:
+        if new_cost < old_cost: 
+            return True
+        
+        return exp((old_cost - new_cost) / self._initial_temperature) > random.random()
+    
     def isStop(self) -> bool:
+        self._initial_temperature *= self._alpha
+
         return self._iteration >= self._max_iteration
+
+    def getRoute(self) -> Route:
+        self.best_route.calculateTotalCost(self.graph)
+
+        return self.best_route
         

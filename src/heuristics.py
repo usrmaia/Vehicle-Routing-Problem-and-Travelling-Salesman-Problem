@@ -68,7 +68,7 @@ def SwapCalculateCost(route: Route, i: int, j: int, graph: Graph) -> float:
     return cost
 
 
-def SwapCalculateRoute(route: Route, i: int, j: int) -> List[Node]:
+def SwapCalculateRoute(route: Route, i: int, j: int) -> Route:
     route._route[i], route._route[j] = route._route[j], route._route[i]
 
     return route._route
