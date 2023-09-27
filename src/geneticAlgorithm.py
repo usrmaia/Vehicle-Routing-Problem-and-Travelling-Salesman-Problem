@@ -1,5 +1,5 @@
 from copy import copy
-from random import choices, randint
+from random import choice, choices, randint
 from typing import List
 from graph import Graph
 from heuristics import (
@@ -42,11 +42,11 @@ class GeneticAlgorithm:
 
         self.crossover_probability: float = crossover_probability
         self.mutation_probability: float = mutation_probability
-        self.elitis: float = elitis
+        self.elitis: int = elitis
 
         self.max_time: int = max_time
 
-        self.best_generation: List[Route] = List[Route]()
+        self.best_generation: List[Route] = List[Route]
         self.best_route: Route = Route()
         self.graph: Graph = Graph()
 
@@ -68,9 +68,7 @@ class GeneticAlgorithm:
     def selection(self):
         # Elitism
         # """
-        self.best_generation = self.best_generation[
-            : int(self.elitis * len(self.best_generation))
-        ]
+        self.best_generation = self.best_generation[: self.elitis]
         # """
 
         # Roulette
@@ -80,7 +78,7 @@ class GeneticAlgorithm:
             route.getCost() / total_fitness for route in self.best_generation
         ]
         self.best_generation = choices(
-            self.best_generation, weights=probabilities, k=self.population_size
+            self.best_generation, weights=probabilities, k=self.elitis
         )
         """
 
@@ -90,7 +88,7 @@ class GeneticAlgorithm:
         self.best_generation.sort(key=lambda route: route.getCost())
 
     def generateInitialPopulation(self) -> None:
-        routes: List[Route] = List[Route]()
+        routes: List[Route] = []
 
         for _ in range(self.population_size):
             match self.initial_solution_heuristic:
@@ -117,43 +115,56 @@ class GeneticAlgorithm:
         fitness_values = [route.getCost() for route in self.best_generation]
         min_fitness = min(fitness_values)
         max_fitness = max(fitness_values)
-
-        for i in range(self.population_size - len(self.best_generation)):
-            if self.crossover_probability * (
-                1 + (fitness_values[i] - min_fitness) / (max_fitness - min_fitness)
-            ) < randint(0, 100):
-                continue
-
-            rand_parent = randint(1, len(self.best_generation) - 1 - 1)
-            parent_1 = self.best_generation[i]
-            parent_2 = self.best_generation[rand_parent]
-
-            rand_cut = randint(1, len(parent_1._route) - 1 - 1)
-            child_1 = Route()
-            child_1._route = parent_1._route[:rand_cut] + parent_2._route[rand_cut:]
-            child_2 = Route()
-            child_2._route = parent_2._route[:rand_cut] + parent_1._route[rand_cut:]
-
-            def childCorrection(child_1: Route, child_2: Route) -> (Route, Route):
-                for node in child_1._route[1:-1]:
-                    if child_1._route.count(node) > 1:
-                        child_1._route.remove(node)
-
-                for node in self.nodes[1:]:
-                    if node not in child_1._route:
-                        child_1._route.append()
-
-                for node in child_2._route[1:-1]:
-                    if child_2._route.count(node) > 1:
-                        child_2._route.remove(node)
-
-                return child_1, child_2
-
-    def mutation(self) -> None:
-        new_routes: List[Route] = List[Route]()
+        childs: List[Route] = []
 
         for route in self.best_generation:
-            if self.mutation_probability > randint(0, 100):
+            # Bests have more chance to crossover
+            weight = 1 - (route.getCost() - min_fitness) / (max_fitness - min_fitness)
+
+            if self.crossover_probability * weight < randint(0, 100):
+                continue
+
+            parent_1 = route
+            rand_parent = choices(self.best_generation, weights=fitness_values.reverse())[0]
+            parent_2 = rand_parent
+
+            def breed(parent_1: Route, parent_2: Route) -> Route:
+                gene_A = randint(1, len(parent_1._route) - 1 - 1 - 1)
+                gene_B = randint(gene_A, len(parent_1._route) - 1 - 1)
+                
+                start_gene = min(gene_A, gene_B)
+                end_gene = max(gene_A, gene_B)
+
+                child_2: List[Node] = parent_1._route[start_gene:end_gene + 1]
+                
+                child_1: List[Node] = []
+                for node in parent_2._route[:start_gene]:
+                    if node in child_2:
+                        start_gene += 1
+                    child_1.append(node)
+                
+                child_3: List[Node] = []
+                for node in parent_2._route[start_gene:]:
+                    if node in child_2:
+                        start_gene += 1
+                    child_3.append(node)
+                
+                child: Route = Route()
+                child._route = child_1 + child_2 + child_3
+                child._cost = child.calculateTotalCost(self.graph)
+
+                return child
+
+            child = breed(parent_1, parent_2)
+            childs.append(child)
+        
+        self.best_generation.extend(childs)
+
+    def mutation(self) -> None:
+        new_routes: List[Route] = []
+
+        for route in self.best_generation:
+            if self.mutation_probability < randint(0, 100): 
                 continue
 
             route: Route = Route()
@@ -162,13 +173,13 @@ class GeneticAlgorithm:
 
             if NeighborhoodHeuristic.SWAP in self.neighborhood_heuristics:
                 route._cost = SwapCalculateCost(
-                    self.best_route, node_i, node_j, self.graph
+                    copy(self.best_route), node_i, node_j, self.graph
                 )
                 route._route = SwapCalculateRoute(copy(self.best_route), node_i, node_j)
                 new_routes.append(route)
             if NeighborhoodHeuristic.TWOOPT in self.neighborhood_heuristics:
                 route._cost = TwoOPTCalculateCost(
-                    self.best_route, node_i, node_j, self.graph
+                    copy(self.best_route), node_i, node_j, self.graph
                 )
                 route._route = TwoOPTCalculateRoute(
                     copy(self.best_route), node_i, node_j
@@ -176,7 +187,7 @@ class GeneticAlgorithm:
                 new_routes.append(route)
             if NeighborhoodHeuristic.OROPT in self.neighborhood_heuristics:
                 route._cost = OrOPTCalculateCost(
-                    self.best_route, node_i, node_j, self.graph
+                    copy(self.best_route), node_i, node_j, self.graph
                 )
                 route._route = OrOPTCalculateRoute(
                     copy(self.best_route), node_i, node_j
