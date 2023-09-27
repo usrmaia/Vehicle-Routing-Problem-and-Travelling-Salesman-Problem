@@ -7,13 +7,14 @@ from heuristics import *
 from route import Route
 from node import Node
 from inputDataFrame import DataFrame
+
 # from showSolution import showSolution
 
 time0 = time()
 nodes: List[Node]
 nodes, lower_bound = DataFrame(
-    # "C:\\Users\\georg\\Codes\\Vehicle Routing Problem and Travelling Salesman Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
-    "C:\\Users\\konstroi.dev\\Codes\\Vehicle-Routing-Problem-and-Travelling-Salesman-Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
+    "C:\\Users\\georg\\Codes\\Vehicle Routing Problem and Travelling Salesman Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
+    # "C:\\Users\\konstroi.dev\\Codes\\Vehicle-Routing-Problem-and-Travelling-Salesman-Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
     # "/workspaces/Vehicle-Routing-Problem-and-Travelling-Salesman-Problem/Data Set/DIMACS-TSPLIB-Benchmark/my10.tsp"
 ).getDataFrame()
 time1 = time()
@@ -38,15 +39,15 @@ route: Route = TabuSearch(
 route: Route = SimulatedAnnealing(
     nodes,
     lower_bound,
-    2000,
+    1000,
     InitialSolutionHeuristics.NEARESTNEIGHBOR,
     [
         NeighborhoodHeuristic.SWAP,
         NeighborhoodHeuristic.TWOOPT,
         NeighborhoodHeuristic.OROPT,
     ],
-    1000,
-    0.95
+    100,
+    0.7,
 ).getRoute()
 time1 = time()
 print(f"Tempo de tabu dos nós: {time1 - time0}")
