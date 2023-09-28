@@ -1,4 +1,5 @@
 from copy import copy
+from random import seed
 from typing import List
 from time import time
 from geneticAlgorithm import GeneticAlgorithm
@@ -17,6 +18,7 @@ nodes, lower_bound = DataFrame(
     # "C:\\Users\\georg\\Codes\\Vehicle Routing Problem and Travelling Salesman Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
     "C:\\Users\\konstroi.dev\\Codes\\Vehicle-Routing-Problem-and-Travelling-Salesman-Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
     # "/workspaces/Vehicle-Routing-Problem-and-Travelling-Salesman-Problem/Data Set/DIMACS-TSPLIB-Benchmark/my10.tsp"
+    # "C:\\Users\\konstroi.dev\\Codes\\Vehicle-Routing-Problem-and-Travelling-Salesman-Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\my10.tsp"
 ).getDataFrame()
 time1 = time()
 print(f"Tempo de leitura do arquivo: {time1 - time0}...")
@@ -52,24 +54,31 @@ route: Route = SimulatedAnnealing(
     0.7,
 ).getRoute()
 """
+seed(42)
 route: Route = GeneticAlgorithm(
     nodes = nodes,
     intance_lower_bound = lower_bound,
     initial_solution_heuristic= InitialSolutionHeuristics.NEARESTNEIGHBOR,
     neighborhood_heuristics=[
-        NeighborhoodHeuristic.SWAP,
-        NeighborhoodHeuristic.TWOOPT,
+        # NeighborhoodHeuristic.SWAP,
+        # NeighborhoodHeuristic.TWOOPT,
         NeighborhoodHeuristic.OROPT,
     ],
     max_generations = 1000,
-    population_size = 5,
-    crossover_probability = 70,
-    mutation_probability = 5,
-    elitis = 5,
+    population_size = 10,
+    crossover_probability = 1000,
+    mutation_probability = 500,
+    elitis = 10,
     max_time = 100
 ).getRoute()
 time1 = time()
 print(f"Tempo de tabu dos nós: {time1 - time0}")
 print(route.getCost())
+graph: Graph = Graph()
+if route.getCost() != route.calculateTotalCost(graph):
+    raise Exception("Cost is not equal to calculateTotalCost")
+if len(route._route) != len(nodes) + 1:
+    raise Exception("Route is not equal to nodes")
+print("ok")
 
 # showSolution(route)

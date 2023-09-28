@@ -1,5 +1,5 @@
 from copy import copy
-from random import choice, choices, randint
+from random import choice, choices, randint, seed
 from typing import List
 from graph import Graph
 from heuristics import (
@@ -53,6 +53,8 @@ class GeneticAlgorithm:
         self.geneticAlgorithm()
 
     def geneticAlgorithm(self) -> None:
+        seed(42)
+
         self.generateInitialPopulation()
 
         self.fitness()
@@ -84,6 +86,9 @@ class GeneticAlgorithm:
 
         self.best_route = self.best_generation[0]
 
+        if self.best_route.getCost() != self.best_route.calculateTotalCost(self.graph):
+            raise Exception("SwapCalculateCost")
+
     def fitness(self):
         self.best_generation.sort(key=lambda route: route.getCost())
 
@@ -112,6 +117,8 @@ class GeneticAlgorithm:
         return False
 
     def crossover(self) -> None:
+        seed(42)
+
         fitness_values = [route.getCost() for route in self.best_generation]
         min_fitness = min(fitness_values)
         max_fitness = max(fitness_values)
@@ -119,7 +126,7 @@ class GeneticAlgorithm:
 
         for route in self.best_generation:
             # Bests have more chance to crossover
-            weight = 1 - (route.getCost() - min_fitness) / (max_fitness - min_fitness)
+            weight = 1 - (route.getCost() - min_fitness) / (max_fitness - min_fitness + 1)
 
             if self.crossover_probability * weight < randint(0, 100):
                 continue
@@ -129,33 +136,43 @@ class GeneticAlgorithm:
             parent_2 = rand_parent
 
             def breed(parent_1: Route, parent_2: Route) -> Route:
-                gene_A = randint(1, len(parent_1._route) - 1 - 1 - 1)
-                gene_B = randint(gene_A, len(parent_1._route) - 1 - 1)
-                
-                start_gene = min(gene_A, gene_B)
-                end_gene = max(gene_A, gene_B)
+                seed(42)
 
-                child_2: List[Node] = parent_1._route[start_gene:end_gene + 1]
+                start_gene = randint(1, len(parent_1._route) - 1 - 1)
+                end_gene = randint(start_gene + 1, len(parent_1._route) - 1)
+
+                child_2: List[Node] = parent_1._route[start_gene:end_gene]
                 
                 child_1: List[Node] = []
-                for node in parent_2._route[:start_gene]:
+                for i, node in enumerate(parent_2._route[:start_gene]):
                     if node in child_2:
                         start_gene += 1
                     child_1.append(node)
                 
                 child_3: List[Node] = []
-                for node in parent_2._route[start_gene:]:
-                    if node in child_2:
-                        start_gene += 1
-                    child_3.append(node)
+                for node in enumerate(parent_2._route[start_gene:]):
+                    if node not in child_1 and node not in child_2:
+                        child_3.append(node)
                 
                 child: Route = Route()
                 child._route = child_1 + child_2 + child_3
                 child._cost = child.calculateTotalCost(self.graph)
 
+                if self.best_route.getCost() != self.best_route.calculateTotalCost(self.graph):
+                    raise Exception("crossover best_route")
+                if child.getCost() != child.calculateTotalCost(self.graph):
+                    raise Exception("crossover")
+                if len(child._route) != len(self.nodes) + 1:
+                    raise Exception("crossover")
+
                 return child
 
             child = breed(parent_1, parent_2)
+
+            if len(child._route) != len(self.nodes) + 1:
+                raise Exception("crossover")
+            if child.getCost() != child.calculateTotalCost(self.graph):
+                raise Exception("crossover")
             childs.append(child)
         
         self.best_generation.extend(childs)
@@ -167,32 +184,49 @@ class GeneticAlgorithm:
             if self.mutation_probability < randint(0, 100): 
                 continue
 
-            route: Route = Route()
             node_i = randint(1, len(self.best_route._route) - 1 - 1)
             node_j = randint(node_i, len(self.best_route._route) - 1 - 1)
 
             if NeighborhoodHeuristic.SWAP in self.neighborhood_heuristics:
-                route._cost = SwapCalculateCost(
-                    copy(self.best_route), node_i, node_j, self.graph
+                new_route: Route = Route()
+
+                new_route._cost = SwapCalculateCost(
+                    copy(route), node_i, node_j, self.graph
                 )
-                route._route = SwapCalculateRoute(copy(self.best_route), node_i, node_j)
-                new_routes.append(route)
+                new_route._route = SwapCalculateRoute(copy(route), node_i, node_j)
+
+                new_routes.append(new_route)
+
+                if self.best_route.getCost() != self.best_route.calculateTotalCost(self.graph):
+                    raise Exception("SwapCalculateCost")
+                if route.getCost() != route.calculateTotalCost(self.graph):
+                    raise Exception("SwapCalculateCost")
             if NeighborhoodHeuristic.TWOOPT in self.neighborhood_heuristics:
                 route._cost = TwoOPTCalculateCost(
-                    copy(self.best_route), node_i, node_j, self.graph
+                    copy(route), node_i, node_j, self.graph
                 )
                 route._route = TwoOPTCalculateRoute(
-                    copy(self.best_route), node_i, node_j
+                    copy(route), node_i, node_j
                 )
                 new_routes.append(route)
+
+                if self.best_route.getCost() != self.best_route.calculateTotalCost(self.graph):
+                    raise Exception("TwoOPTCalculateRoute")
+                if route.getCost() != route.calculateTotalCost(self.graph):
+                    raise Exception("TwoOPTCalculateRoute")
             if NeighborhoodHeuristic.OROPT in self.neighborhood_heuristics:
                 route._cost = OrOPTCalculateCost(
-                    copy(self.best_route), node_i, node_j, self.graph
+                    copy(route), node_i, node_j, self.graph
                 )
                 route._route = OrOPTCalculateRoute(
-                    copy(self.best_route), node_i, node_j
+                    copy(route), node_i, node_j
                 )
                 new_routes.append(route)
+
+                if self.best_route.getCost() != self.best_route.calculateTotalCost():
+                    raise Exception("OrOPTCalculateCost")
+                if route.getCost() != route.calculateTotalCost():
+                    raise Exception("OrOPTCalculateCost")
 
         self.best_generation.extend(new_routes)
 
