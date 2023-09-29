@@ -15,8 +15,8 @@ from inputDataFrame import DataFrame
 time0 = time()
 nodes: List[Node]
 nodes, lower_bound = DataFrame(
-    # "C:\\Users\\georg\\Codes\\Vehicle Routing Problem and Travelling Salesman Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
-    "C:\\Users\\konstroi.dev\\Codes\\Vehicle-Routing-Problem-and-Travelling-Salesman-Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
+    "C:\\Users\\georg\\Codes\\Vehicle Routing Problem and Travelling Salesman Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
+    # "C:\\Users\\konstroi.dev\\Codes\\Vehicle-Routing-Problem-and-Travelling-Salesman-Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
     # "/workspaces/Vehicle-Routing-Problem-and-Travelling-Salesman-Problem/Data Set/DIMACS-TSPLIB-Benchmark/my10.tsp"
     # "C:\\Users\\konstroi.dev\\Codes\\Vehicle-Routing-Problem-and-Travelling-Salesman-Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\my10.tsp"
 ).getDataFrame()
@@ -56,20 +56,20 @@ route: Route = SimulatedAnnealing(
 """
 seed(42)
 route: Route = GeneticAlgorithm(
-    nodes = nodes,
-    intance_lower_bound = lower_bound,
-    initial_solution_heuristic= InitialSolutionHeuristics.NEARESTNEIGHBOR,
+    nodes=nodes,
+    intance_lower_bound=lower_bound,
+    initial_solution_heuristic=InitialSolutionHeuristics.NEARESTNEIGHBOR,
     neighborhood_heuristics=[
-        # NeighborhoodHeuristic.SWAP,
-        # NeighborhoodHeuristic.TWOOPT,
+        NeighborhoodHeuristic.SWAP,
+        NeighborhoodHeuristic.TWOOPT,
         NeighborhoodHeuristic.OROPT,
     ],
-    max_generations = 1000,
-    population_size = 10,
-    crossover_probability = 1000,
-    mutation_probability = 500,
-    elitis = 10,
-    max_time = 100
+    max_generations=1000,
+    population_size=10,
+    crossover_probability=1000,
+    mutation_probability=500,
+    elitis=10,
+    max_time=100,
 ).getRoute()
 time1 = time()
 print(f"Tempo de tabu dos nós: {time1 - time0}")
