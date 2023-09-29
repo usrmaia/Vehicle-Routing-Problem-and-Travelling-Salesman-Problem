@@ -60,17 +60,8 @@ class GeneticAlgorithm:
         self.fitness()
         self.selection()
 
-        if self.best_route.getCost() != self.best_route.calculateTotalCost(self.graph):
-            raise Exception("InitialSolutionHeuristics")
-
         while not self.isStop():  # Converege
             self.crossover()
-
-            if self.best_route.getCost() != self.best_route.calculateTotalCost(
-                self.graph
-            ):
-                raise Exception("crossover")
-
             self.mutation()
 
             self.fitness()
@@ -95,9 +86,6 @@ class GeneticAlgorithm:
 
         self.best_route = self.best_generation[0]
 
-        if self.best_route.getCost() != self.best_route.calculateTotalCost(Graph()):
-            raise Exception("SwapCalculateCost")
-
     def fitness(self):
         self.best_generation.sort(key=lambda route: route.getCost())
 
@@ -110,10 +98,6 @@ class GeneticAlgorithm:
                     routes.append(RandomInsertion(copy(self.nodes)))
                 case InitialSolutionHeuristics.NEARESTNEIGHBOR:
                     routes.append(NearestNeighbor(copy(self.nodes), self.graph))
-
-        for route in routes:
-            if route.getCost() != route.calculateTotalCost(self.graph):
-                raise Exception("InitialSolutionHeuristics")
 
         self.best_generation = routes
 
@@ -175,54 +159,21 @@ class GeneticAlgorithm:
                 child._route = child_1 + child_2 + child_3
                 child._cost = child.calculateTotalCost(self.graph)
 
-                if self.best_route.getCost() != self.best_route.calculateTotalCost(
-                    self.graph
-                ):
-                    raise Exception("crossover best_route")
-                if child.getCost() != child.calculateTotalCost(self.graph):
-                    raise Exception("crossover")
-                if len(child._route) != len(self.nodes) + 1:
-                    raise Exception("crossover")
-
                 return child
 
             child = breed(parent_1, parent_2)
-
-            if len(child._route) != len(self.nodes) + 1:
-                raise Exception("crossover")
-            if child.getCost() != child.calculateTotalCost(self.graph):
-                raise Exception("crossover")
             childs.append(child)
-            if self.best_route.getCost() != self.best_route.calculateTotalCost(
-                self.graph
-            ):
-                raise Exception("crossover best_route")
 
         self.best_generation.extend(childs)
 
     def mutation(self) -> None:
-        if self.best_route.getCost() != self.best_route.calculateTotalCost(
-                self.graph
-        ):
-            raise Exception("crossover best_route")
-        
         new_routes: List[Route] = []
 
-        for route in self.best_generation:
-            if self.best_route.getCost() != self.best_route.calculateTotalCost(
-                self.graph
-            ):
-                raise Exception("crossover best_route")
-            
+        for route in self.best_generation:            
             if self.mutation_probability < randint(0, 100):
                 continue
 
             node_i, node_j = self.getTwoValues()
-
-            if self.best_route.getCost() != self.best_route.calculateTotalCost(
-                self.graph
-            ):
-                raise Exception("crossover best_route")
 
             if NeighborhoodHeuristic.SWAP in self.neighborhood_heuristics:
                 new_route: Route = Route()
@@ -233,14 +184,6 @@ class GeneticAlgorithm:
                 new_route._route = SwapCalculateRoute(new_route, node_i, node_j)
 
                 new_routes.append(new_route)
-
-                if self.best_route.getCost() != self.best_route.calculateTotalCost(self.graph):
-                    raise Exception("SwapCalculateCost")
-                if route.getCost() != route.calculateTotalCost(self.graph):
-                    raise Exception("SwapCalculateCost")
-                if new_route.getCost() != new_route.calculateTotalCost(self.graph):
-                    # raise Exception("SwapCalculateCost")
-                    pass
             if NeighborhoodHeuristic.TWOOPT in self.neighborhood_heuristics:
                 new_route: Route = Route()
                 new_route._route = copy(route.getRoute())
@@ -250,13 +193,6 @@ class GeneticAlgorithm:
                 new_route._route = TwoOPTCalculateRoute(new_route, node_i, node_j)
 
                 new_routes.append(new_route)
-
-                if self.best_route.getCost() != self.best_route.calculateTotalCost(
-                    self.graph
-                ):
-                    raise Exception("TwoOPTCalculateRoute")
-                if route.getCost() != route.calculateTotalCost(self.graph):
-                    raise Exception("TwoOPTCalculateRoute")
                 if round(new_route.getCost(), 2) != round(new_route.calculateTotalCost(self.graph), 2):
                     raise Exception("TwoOPTCalculateRoute")
             if NeighborhoodHeuristic.OROPT in self.neighborhood_heuristics:
@@ -268,13 +204,6 @@ class GeneticAlgorithm:
                 new_route._route = OrOPTCalculateRoute(new_route, node_i, node_j)
 
                 new_routes.append(new_route)
-
-                if round(self.best_route.getCost(), 2) != round(self.best_route.calculateTotalCost(self.graph), 2):
-                    raise Exception("OrOPTCalculateCost")
-                if route.getCost() != route.calculateTotalCost(self.graph):
-                    raise Exception("OrOPTCalculateCost")
-                if round(new_route.getCost(), 2) != round(new_route.calculateTotalCost(self.graph), 2):
-                    raise Exception("OrOPTCalculateCost")
 
         self.best_generation.extend(new_routes)
 

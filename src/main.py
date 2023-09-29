@@ -64,11 +64,11 @@ route: Route = GeneticAlgorithm(
         NeighborhoodHeuristic.TWOOPT,
         NeighborhoodHeuristic.OROPT,
     ],
-    max_generations=1000,
-    population_size=100,
-    crossover_probability=1000,
-    mutation_probability=500,
-    elitis=100,
+    max_generations=20,
+    population_size=50,
+    crossover_probability=70,
+    mutation_probability=70,
+    elitis=50,
     max_time=100,
 ).getRoute()
 time1 = time()
