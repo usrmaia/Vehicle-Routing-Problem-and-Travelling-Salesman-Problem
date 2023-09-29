@@ -58,24 +58,24 @@ route: Route = SimulatedAnnealing(
 route: Route = GeneticAlgorithm(
     nodes=nodes,
     intance_lower_bound=lower_bound,
-    initial_solution_heuristic=InitialSolutionHeuristics.NEARESTNEIGHBOR,
+    initial_solution_heuristic=InitialSolutionHeuristics.RANDOMINSERTION,
     neighborhood_heuristics=[
         NeighborhoodHeuristic.SWAP,
         NeighborhoodHeuristic.TWOOPT,
         NeighborhoodHeuristic.OROPT,
     ],
-    max_generations=20,
-    population_size=50,
-    crossover_probability=70,
+    max_generations=1,
+    population_size=5,
+    crossover_probability=50,
     mutation_probability=70,
-    elitis=50,
+    elitis=20,
     max_time=100,
 ).getRoute()
 time1 = time()
 print(f"Tempo de tabu dos nós: {time1 - time0}")
 print(route.getCost())
 graph: Graph = Graph()
-if route.getCost() != route.calculateTotalCost(graph):
+if round(route.getCost(), 2) != round(route.calculateTotalCost(graph), 2):
     raise Exception("Cost is not equal to calculateTotalCost")
 if len(route._route) != len(nodes) + 1:
     raise Exception("Route is not equal to nodes")

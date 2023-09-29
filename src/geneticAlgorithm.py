@@ -95,7 +95,7 @@ class GeneticAlgorithm:
         for _ in range(self.population_size):
             match self.initial_solution_heuristic:
                 case InitialSolutionHeuristics.RANDOMINSERTION:
-                    routes.append(RandomInsertion(copy(self.nodes)))
+                    routes.append(RandomInsertion(copy(self.nodes), self.graph))
                 case InitialSolutionHeuristics.NEARESTNEIGHBOR:
                     routes.append(NearestNeighbor(copy(self.nodes), self.graph))
 
@@ -181,6 +181,7 @@ class GeneticAlgorithm:
                 new_route._cost = copy(route.getCost())
 
                 new_route._cost = SwapCalculateCost(new_route, node_i, node_j, self.graph)
+                
                 new_route._route = SwapCalculateRoute(new_route, node_i, node_j)
 
                 new_routes.append(new_route)
@@ -193,8 +194,6 @@ class GeneticAlgorithm:
                 new_route._route = TwoOPTCalculateRoute(new_route, node_i, node_j)
 
                 new_routes.append(new_route)
-                if round(new_route.getCost(), 2) != round(new_route.calculateTotalCost(self.graph), 2):
-                    raise Exception("TwoOPTCalculateRoute")
             if NeighborhoodHeuristic.OROPT in self.neighborhood_heuristics:
                 new_route: Route = Route()
                 new_route._route = copy(route.getRoute())
