@@ -15,8 +15,8 @@ from inputDataFrame import DataFrame
 time0 = time()
 nodes: List[Node]
 nodes, lower_bound = DataFrame(
-    "C:\\Users\\georg\\Codes\\Vehicle Routing Problem and Travelling Salesman Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
-    # "C:\\Users\\konstroi.dev\\Codes\\Vehicle-Routing-Problem-and-Travelling-Salesman-Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
+    # "C:\\Users\\georg\\Codes\\Vehicle Routing Problem and Travelling Salesman Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
+    "C:\\Users\\konstroi.dev\\Codes\\Vehicle-Routing-Problem-and-Travelling-Salesman-Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
     # "/workspaces/Vehicle-Routing-Problem-and-Travelling-Salesman-Problem/Data Set/DIMACS-TSPLIB-Benchmark/my10.tsp"
     # "C:\\Users\\konstroi.dev\\Codes\\Vehicle-Routing-Problem-and-Travelling-Salesman-Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\my10.tsp"
 ).getDataFrame()
@@ -54,7 +54,7 @@ route: Route = SimulatedAnnealing(
     0.7,
 ).getRoute()
 """
-seed(42)
+# seed(42)
 route: Route = GeneticAlgorithm(
     nodes=nodes,
     intance_lower_bound=lower_bound,
@@ -65,10 +65,10 @@ route: Route = GeneticAlgorithm(
         NeighborhoodHeuristic.OROPT,
     ],
     max_generations=1000,
-    population_size=10,
+    population_size=100,
     crossover_probability=1000,
     mutation_probability=500,
-    elitis=10,
+    elitis=100,
     max_time=100,
 ).getRoute()
 time1 = time()
