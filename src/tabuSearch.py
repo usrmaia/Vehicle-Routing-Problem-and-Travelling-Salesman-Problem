@@ -1,3 +1,4 @@
+from collections import deque
 from sys import maxsize
 from random import randint, seed, choice, randrange
 from copy import copy
@@ -54,56 +55,63 @@ class TabuSearch:
 
         while not self.isStop():
             for i in range(1, len(self.best_route._route) - 1 - 1):
-                j = randint(i + 1, len(self.best_route._route) - 1 - 1)
+                self._iteration += 1
 
-                if i == j:
-                    continue
-
-                heuristics = copy(self.neighborhood_heuristics)
-                # heuristics = [Heuristic.TWOOPT]
-
-                while heuristics:
-                    heuristic = heuristics.pop(randrange(len(heuristics)))
-                    self._iteration += 1
-
-                    move = Move(heuristic, i, j)
-                    if move in self._tabu_list:
+                for j in range(i + 1, len(self.best_route._route) - 1 - 1):
+                    if i == j:
                         continue
 
-                    node_i, node_j = i, j
-                    if heuristic != NeighborhoodHeuristic.OROPT and j < i:
-                        node_i, node_j = j, i
+                    heuristics = copy(self.neighborhood_heuristics)
 
-                    # Pesquisa do custo
-                    match heuristic:
-                        case NeighborhoodHeuristic.SWAP:
-                            cost = SwapCalculateCost(self.best_route, node_i, node_j, self.graph)
-                        case NeighborhoodHeuristic.TWOOPT:
-                            cost = TwoOPTCalculateCost(self.best_route, node_i, node_j, self.graph)
-                        case NeighborhoodHeuristic.OROPT:
-                            cost = OrOPTCalculateCost(self.best_route, node_i, node_j, self.graph)
+                    while heuristics:
+                        heuristic = heuristics.pop(randrange(len(heuristics)))
 
-                    # if cost > limit:
-                    if cost > self.best_route.getCost():
-                        self._tabu_list.append(move)
-                        continue
+                        move = Move(self.best_route, heuristic, i, j)
+                        if move in self._tabu_list:
+                            continue
 
-                    # Atualização do custo
-                    self.best_route._cost = cost
+                        node_i, node_j = i, j
 
-                    match heuristic:
-                        case NeighborhoodHeuristic.SWAP:
-                            route = SwapCalculateRoute(self.best_route, node_i, node_j)
-                        case NeighborhoodHeuristic.TWOOPT:
-                            route = TwoOPTCalculateRoute(
-                                self.best_route, node_i, node_j
-                            )
-                        case NeighborhoodHeuristic.OROPT:
-                            route = OrOPTCalculateRoute(self.best_route, node_i, node_j)
+                        # Pesquisa do custo
+                        match heuristic:
+                            case NeighborhoodHeuristic.SWAP:
+                                cost = SwapCalculateCost(
+                                    self.best_route, node_i, node_j, self.graph
+                                )
+                            case NeighborhoodHeuristic.TWOOPT:
+                                cost = TwoOPTCalculateCost(
+                                    self.best_route, node_i, node_j, self.graph
+                                )
+                            case NeighborhoodHeuristic.OROPT:
+                                cost = OrOPTCalculateCost(
+                                    self.best_route, node_i, node_j, self.graph
+                                )
 
-                    self.best_route._route = route
-                    self._iteration = 0
-                    heuristics = []
+                        # if cost > limit:
+                        if cost > self.best_route.getCost():
+                            self._tabu_list.append(move)
+                            continue
+
+                        # Atualização do custo
+                        self.best_route._cost = cost
+
+                        match heuristic:
+                            case NeighborhoodHeuristic.SWAP:
+                                route = SwapCalculateRoute(
+                                    self.best_route, node_i, node_j
+                                )
+                            case NeighborhoodHeuristic.TWOOPT:
+                                route = TwoOPTCalculateRoute(
+                                    self.best_route, node_i, node_j
+                                )
+                            case NeighborhoodHeuristic.OROPT:
+                                route = OrOPTCalculateRoute(
+                                    self.best_route, node_i, node_j
+                                )
+
+                        self.best_route._route = route
+                        heuristics = []
+                        self._iteration = 0
 
     def isStop(self) -> bool:
         # return True
@@ -116,46 +124,42 @@ class TabuSearch:
         # return False
 
     def getRoute(self) -> Route:
-        self.best_route.calculateTotalCost(self.graph)
-
         return self.best_route
 
 
 class Move:
     def __init__(
-        self,
-        heuristic: NeighborhoodHeuristic,
-        i: int,
-        j: int,
-        segment=None,
+        self, route: Route, heuristic: NeighborhoodHeuristic, i: int, j: int
     ) -> None:
+        self.cost = route._cost
         self.heuristic = heuristic
         self.i = i
         self.j = j
-        self.segment = segment
+
+    def __eq__(self, __value: "Move") -> bool:
+        return (
+            self.cost == __value.cost
+            and self.heuristic == __value.heuristic
+            and self.i == __value.i
+            and self.j == __value.j
+        )
+
+    def __hash__(self) -> int:
+        return hash((self.cost, self.heuristic, self.i, self.j))
 
 
 class TabuList:
-    def __init__(self, len) -> None:
-        self._tabu_list = {}
-        self._len = len
+    def __init__(self, max_len):
+        self._tabu_set = set()
+        self.max_len = max_len
 
-    def append(self, move: Move):
-        # Manutenção do tamanho da lista
-        if len(self._tabu_list) > self._len:
-            self._tabu_list.clear()  # Abordagem que limpa a lista
-            # self._tabu_list.pop(self._tabu_list.values()[0]) # Abordagem que remove o primeiro elemento
+    def append(self, move):
+        if len(self._tabu_set) > self.max_len:
+            self._tabu_set.clear()
 
-        if move.heuristic != NeighborhoodHeuristic.OROPT:
-            move = Move(move.heuristic, move.i, move.j)
+        move_hash = hash(move)
+        self._tabu_set.add(move_hash)
 
-        self._tabu_list[move] = True
-
-    def __contains__(self, move: Move):
-        if move.heuristic == NeighborhoodHeuristic.OROPT:
-            return move in self._tabu_list
-
-        return (
-            Move(move.heuristic, move.i, move.j) in self._tabu_list
-            or Move(move.heuristic, move.j, move.i) in self._tabu_list
-        )
+    def __contains__(self, move):
+        move_hash = hash(move)
+        return move_hash in self._tabu_set

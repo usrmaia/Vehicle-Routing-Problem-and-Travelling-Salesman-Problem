@@ -15,8 +15,8 @@ from inputDataFrame import DataFrame
 time0 = time()
 nodes: List[Node]
 nodes, lower_bound = DataFrame(
-    # "C:\\Users\\georg\\Codes\\Vehicle Routing Problem and Travelling Salesman Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
-    "C:\\Users\\konstroi.dev\\Codes\\Vehicle-Routing-Problem-and-Travelling-Salesman-Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
+    "C:\\Users\\georg\\Codes\\Vehicle Routing Problem and Travelling Salesman Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
+    # "C:\\Users\\konstroi.dev\\Codes\\Vehicle-Routing-Problem-and-Travelling-Salesman-Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
     # "/workspaces/Vehicle-Routing-Problem-and-Travelling-Salesman-Problem/Data Set/DIMACS-TSPLIB-Benchmark/my10.tsp"
     # "C:\\Users\\konstroi.dev\\Codes\\Vehicle-Routing-Problem-and-Travelling-Salesman-Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\my10.tsp"
 ).getDataFrame()
@@ -25,12 +25,12 @@ print(f"Tempo de leitura do arquivo: {time1 - time0}...")
 print(f"lower_bound = {lower_bound}")
 
 time0 = time()
-"""
+# """
 route: Route = TabuSearch(
     nodes,
     lower_bound,
-    50,
-    4000 + 40 * len(nodes),
+    3 * len(nodes) + 3,
+    40,
     InitialSolutionHeuristics.NEARESTNEIGHBOR,
     [
         NeighborhoodHeuristic.SWAP,
@@ -38,7 +38,7 @@ route: Route = TabuSearch(
         NeighborhoodHeuristic.OROPT,
     ],
 ).getRoute()
-"""
+# """
 """
 route: Route = SimulatedAnnealing(
     nodes,
@@ -55,6 +55,7 @@ route: Route = SimulatedAnnealing(
 ).getRoute()
 """
 # seed(42)
+"""
 route: Route = GeneticAlgorithm(
     nodes=nodes,
     intance_lower_bound=lower_bound,
@@ -71,6 +72,7 @@ route: Route = GeneticAlgorithm(
     elitis=20,
     max_time=100,
 ).getRoute()
+"""
 time1 = time()
 print(f"Tempo de tabu dos nós: {time1 - time0}")
 print(route.getCost())

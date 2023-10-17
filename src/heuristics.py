@@ -11,17 +11,14 @@ def RandomInsertion(nodes: List[Node], graph: Graph) -> Route:
 
     depot = nodes.pop(0)
     route.addNode(depot)
+
     while len(nodes):
         node = nodes.pop(randint(0, len(nodes) - 1))
         route.addNode(node)
-        graph.distanceTo(route._route[-2], route._route[-1])
+        route._cost += graph.distanceTo(route._route[-2], route._route[-1])
 
     route.addNode(depot)
-    graph.distanceTo(route._route[-2], route._route[-1])
-
-    # TODO otimizar o cálculo do custo total
-    if round(route._cost, 2) != round(route.calculateTotalCost(graph), 2):
-        raise Exception("aaaaaaaaa Cost is not equal to calculateTotalCost")
+    route._cost += graph.distanceTo(route._route[-2], route._route[-1])
 
     return route
 
