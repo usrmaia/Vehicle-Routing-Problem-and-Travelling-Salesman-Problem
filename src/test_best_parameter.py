@@ -1,5 +1,6 @@
 from copy import copy
 from random import seed
+import sys
 from typing import List
 from time import time
 from geneticAlgorithm import GeneticAlgorithm
@@ -11,19 +12,19 @@ from node import Node
 from inputDataFrame import DataFrame
 
 # from showSolution import showSolution
-"""
 medium_time = 0
-min_time = max(int)
+min_time = sys.maxsize
 max_time = 0
 medium_cost = 0
-min_cost = max(int)
+min_cost = sys.maxsize
 max_cost = 0
 
 for i in range(1, 11):
+    print(i)
     nodes: List[Node]
     nodes, lower_bound = DataFrame(
-        "C:\\Users\\georg\\Codes\\Vehicle Routing Problem and Travelling Salesman Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
-        # "C:\\Users\\konstroi.dev\\Codes\\Vehicle-Routing-Problem-and-Travelling-Salesman-Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
+        # "C:\\Users\\georg\\Codes\\Vehicle Routing Problem and Travelling Salesman Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
+        "C:\\Users\\konstroi.dev\\Codes\\Vehicle-Routing-Problem-and-Travelling-Salesman-Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
         # "/workspaces/Vehicle-Routing-Problem-and-Travelling-Salesman-Problem/Data Set/DIMACS-TSPLIB-Benchmark/my10.tsp"
         # "C:\\Users\\konstroi.dev\\Codes\\Vehicle-Routing-Problem-and-Travelling-Salesman-Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\my10.tsp"
     ).getDataFrame()
@@ -68,21 +69,21 @@ print(f"Tempo mínimo de execução: {min_time}...")
 print(f"Tempo máximo de execução: {max_time}...")
 print(f"Custo médio do custo: {medium_cost / 10}...")
 print(f"Custo mínimo do custo: {min_cost}...")
-print(f"Custo máximo do custo: {max_cost}...")"""
+print(f"Custo máximo do custo: {max_cost}...")
 
 medium_time = 0
-min_time = max(int)
+min_time = sys.maxsize
 max_time = 0
 medium_cost = 0
-min_cost = max(int)
+min_cost = sys.maxsize
 max_cost = 0
 
 for i in range(1, 11):
     print(i)
     nodes: List[Node]
     nodes, lower_bound = DataFrame(
-        "C:\\Users\\georg\\Codes\\Vehicle Routing Problem and Travelling Salesman Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
-        # "C:\\Users\\konstroi.dev\\Codes\\Vehicle-Routing-Problem-and-Travelling-Salesman-Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
+        # "C:\\Users\\georg\\Codes\\Vehicle Routing Problem and Travelling Salesman Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
+        "C:\\Users\\konstroi.dev\\Codes\\Vehicle-Routing-Problem-and-Travelling-Salesman-Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
         # "/workspaces/Vehicle-Routing-Problem-and-Travelling-Salesman-Problem/Data Set/DIMACS-TSPLIB-Benchmark/my10.tsp"
         # "C:\\Users\\konstroi.dev\\Codes\\Vehicle-Routing-Problem-and-Travelling-Salesman-Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\my10.tsp"
     ).getDataFrame()
@@ -92,12 +93,12 @@ for i in range(1, 11):
         nodes,
         lower_bound,
         3 * len(nodes) + 3,
-        80,
+        40,
         InitialSolutionHeuristics.NEARESTNEIGHBOR,
         [
             NeighborhoodHeuristic.SWAP,
-            NeighborhoodHeuristic.TWOOPT,
             NeighborhoodHeuristic.OROPT,
+            NeighborhoodHeuristic.TWOOPT,
         ],
     ).getRoute()
     time1 = time()
@@ -120,7 +121,7 @@ for i in range(1, 11):
     if len(route._route) != len(nodes) + 1:
         raise Exception("Route is not equal to nodes")
 
-print("Tabu Search - 3 * len(nodes) + 3, 80 - vm1084")
+print("Tabu Search without twoopt - 3 * len(nodes) + 3, 80 - vm1084")
 print("vm1084")
 print(f"Tempo médio de execução: {medium_time / 10}...")
 print(f"Tempo mínimo de execução: {min_time}...")
@@ -128,6 +129,64 @@ print(f"Tempo máximo de execução: {max_time}...")
 print(f"Custo médio do custo: {medium_cost / 10}...")
 print(f"Custo mínimo do custo: {min_cost}...")
 print(f"Custo máximo do custo: {max_cost}...")
+
+medium_time = 0
+min_time = sys.maxsize
+max_time = 0
+medium_cost = 0
+min_cost = sys.maxsize
+max_cost = 0
+
+for i in range(1, 11):
+    print(i)
+    nodes: List[Node]
+    nodes, lower_bound = DataFrame(
+        # "C:\\Users\\georg\\Codes\\Vehicle Routing Problem and Travelling Salesman Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
+        "C:\\Users\\konstroi.dev\\Codes\\Vehicle-Routing-Problem-and-Travelling-Salesman-Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
+        # "/workspaces/Vehicle-Routing-Problem-and-Travelling-Salesman-Problem/Data Set/DIMACS-TSPLIB-Benchmark/my10.tsp"
+        # "C:\\Users\\konstroi.dev\\Codes\\Vehicle-Routing-Problem-and-Travelling-Salesman-Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\my10.tsp"
+    ).getDataFrame()
+
+    time0 = time()
+    route: Route = TabuSearch(
+        nodes,
+        lower_bound,
+        1 * len(nodes) + 1,
+        80,
+        InitialSolutionHeuristics.NEARESTNEIGHBOR,
+        [
+            NeighborhoodHeuristic.TWOOPT,
+        ],
+    ).getRoute()
+    time1 = time()
+
+    medium_time += time1 - time0
+    if time1 - time0 < min_time:
+        min_time = time1 - time0
+    if time1 - time0 > max_time:
+        max_time = time1 - time0
+
+    medium_cost += route.getCost()
+    if route.getCost() < min_cost:
+        min_cost = route.getCost()
+    if route.getCost() > max_cost:
+        max_cost = route.getCost()
+
+    graph: Graph = Graph()
+    if round(route.getCost(), 2) != round(route.calculateTotalCost(graph), 2):
+        raise Exception("Cost is not equal to calculateTotalCost")
+    if len(route._route) != len(nodes) + 1:
+        raise Exception("Route is not equal to nodes")
+
+print("Tabu Search with twoopt - 3 * len(nodes) + 3, 80 - vm1084")
+print("vm1084")
+print(f"Tempo médio de execução: {medium_time / 10}...")
+print(f"Tempo mínimo de execução: {min_time}...")
+print(f"Tempo máximo de execução: {max_time}...")
+print(f"Custo médio do custo: {medium_cost / 10}...")
+print(f"Custo mínimo do custo: {min_cost}...")
+print(f"Custo máximo do custo: {max_cost}...")
+
 """
 route: Route = SimulatedAnnealing(
     nodes,
