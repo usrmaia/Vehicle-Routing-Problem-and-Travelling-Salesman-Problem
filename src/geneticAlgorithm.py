@@ -169,7 +169,7 @@ class GeneticAlgorithm:
     def mutation(self) -> None:
         new_routes: List[Route] = []
 
-        for route in self.best_generation:            
+        for route in self.best_generation:
             if self.mutation_probability < randint(0, 100):
                 continue
 
@@ -180,8 +180,10 @@ class GeneticAlgorithm:
                 new_route._route = copy(route.getRoute())
                 new_route._cost = copy(route.getCost())
 
-                new_route._cost = SwapCalculateCost(new_route, node_i, node_j, self.graph)
-                
+                new_route._cost = SwapCalculateCost(
+                    new_route, node_i, node_j, self.graph
+                )
+
                 new_route._route = SwapCalculateRoute(new_route, node_i, node_j)
 
                 new_routes.append(new_route)
@@ -190,7 +192,9 @@ class GeneticAlgorithm:
                 new_route._route = copy(route.getRoute())
                 new_route._cost = copy(route.getCost())
 
-                new_route._cost = TwoOPTCalculateCost(new_route, node_i, node_j, self.graph)
+                new_route._cost = TwoOPTCalculateCost(
+                    new_route, node_i, node_j, self.graph
+                )
                 new_route._route = TwoOPTCalculateRoute(new_route, node_i, node_j)
 
                 new_routes.append(new_route)
@@ -199,7 +203,9 @@ class GeneticAlgorithm:
                 new_route._route = copy(route.getRoute())
                 new_route._cost = copy(route.getCost())
 
-                new_route._cost = OrOPTCalculateCost(new_route, node_i, node_j, self.graph)
+                new_route._cost = OrOPTCalculateCost(
+                    new_route, node_i, node_j, self.graph
+                )
                 new_route._route = OrOPTCalculateRoute(new_route, node_i, node_j)
 
                 new_routes.append(new_route)
@@ -215,5 +221,5 @@ class GeneticAlgorithm:
 
         while node_i == node_j:
             node_j = randint(node_i, len(self.best_route._route) - 1 - 1)
-        
+
         return node_i, node_j
