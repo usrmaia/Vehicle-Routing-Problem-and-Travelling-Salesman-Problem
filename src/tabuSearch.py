@@ -56,9 +56,6 @@ class TabuSearch:
 
         while not self.isStop():
             for i in range(1, len(self.best_route._route) - 1 - 1 - 1):
-                if self.isStop():
-                    self._iteration = self._max_iteration + 1
-                    break
                 self._iteration += 1
 
                 j = randrange(i + 1, len(self.best_route._route) - 1 - 1)

@@ -23,18 +23,18 @@ for i in range(1, 11):
     time0 = time()
     nodes: List[Node] = []
     nodes, lower_bound = DataFrame(
-        "C:\\Users\\georg\\Codes\\Vehicle Routing Problem and Travelling Salesman Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\usa13509.tsp"
+        "C:\\Users\\georg\\Codes\\Vehicle Routing Problem and Travelling Salesman Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\u2319.tsp"
         # "C:\\Users\\konstroi.dev\\Codes\\Vehicle-Routing-Problem-and-Travelling-Salesman-Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\vm1084.tsp"
         # "/workspaces/Vehicle-Routing-Problem-and-Travelling-Salesman-Problem/Data Set/DIMACS-TSPLIB-Benchmark/my10.tsp"
         # "C:\\Users\\konstroi.dev\\Codes\\Vehicle-Routing-Problem-and-Travelling-Salesman-Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\my10.tsp"
     ).getDataFrame()
-    # """
+
     route: Route = TabuSearch(
         nodes,
         lower_bound,
         3 * len(nodes) + 3,
-        int(len(nodes) * 0.2),
-        InitialSolutionHeuristics.RANDOMINSERTION,
+        len(nodes) * 80,
+        InitialSolutionHeuristics.NEARESTNEIGHBOR,
         [
             NeighborhoodHeuristic.SWAP,
             NeighborhoodHeuristic.TWOOPT,
