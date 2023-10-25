@@ -51,7 +51,7 @@ class TabuSearch:
         return best
 
     def tabuSearch(self):
-        self.best_route = self.initialSolution(10)
+        self.best_route = self.initialSolution(5)
 
         while not self.isStop():
             for i in range(1, len(self.best_route._route) - 1 - 1 - 1):

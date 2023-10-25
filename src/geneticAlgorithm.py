@@ -102,11 +102,10 @@ class GeneticAlgorithm:
         self.best_generation = routes
 
     def isStop(self) -> bool:
-        if (
-            self.best_route.getCost() <= self.intance_lower_bound
-            # or self.max_time <= 0
-            or self.max_generations <= 0
-        ):
+        # self.best_route.getCost() <= self.intance_lower_bound
+        # or self.max_time <= 0
+        # or
+        if self.max_generations <= 0:
             return True
 
         self.max_generations -= 1

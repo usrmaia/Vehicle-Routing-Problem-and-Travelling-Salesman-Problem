@@ -25,15 +25,11 @@ class SimulatedAnnealing:
         self,
         nodes: List[Node],
         intance_lower_bound: float,
-        max_iterations: int,
         initial_solution_heuristics: InitialSolutionHeuristics,
         neighborhood_heuristics: List[NeighborhoodHeuristic],
         initial_temperature: float,
         alpha: float,
     ):
-        self._iteration = 0
-        self._max_iteration = max_iterations
-
         self.initial_solution_heuristics = initial_solution_heuristics
         self.neighborhood_heuristics = neighborhood_heuristics
 
@@ -43,7 +39,7 @@ class SimulatedAnnealing:
         self.graph = Graph()
         self.best_route = Route()
 
-        self._initial_temperature = initial_temperature
+        self._temperature = initial_temperature
         self._alpha = alpha
 
         self.simulatedAnnealing()
@@ -63,7 +59,7 @@ class SimulatedAnnealing:
         return best
 
     def simulatedAnnealing(self):
-        self.best_route = self.initialSolution(10)
+        self.best_route = self.initialSolution(5)
 
         while not self.isStop():
             for i in range(1, len(self.best_route._route) - 1 - 1 - 1):
@@ -115,20 +111,17 @@ class SimulatedAnnealing:
                                 )
 
                         self.best_route._route = route
-
-                self._iteration += 1
+                        heuristic = []
 
     def acceptanceProbability(self, new_cost: float, old_cost: float) -> bool:
         if new_cost < old_cost:
-            self._iteration = 0
             return True
 
-        return exp((old_cost - new_cost) / self._initial_temperature) > random.random()
+        return exp((old_cost - new_cost) / self._temperature) > random.random()
 
     def isStop(self) -> bool:
-        self._initial_temperature *= self._alpha
-
-        return self._iteration >= self._max_iteration
+        self._temperature *= self._alpha
+        return self._temperature <= 0.0000000000000000000000000000000000000001
 
     def getRoute(self) -> Route:
         return self.best_route
