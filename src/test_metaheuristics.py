@@ -10,10 +10,9 @@ from heuristics import *
 from route import Route
 from node import Node
 from inputDataFrame import DataFrame
-import numpy as np
 import statistics
 
-instance = "u1060"
+instance = "valedojaguaribe15"
 """
     "u1060",
     "vm1084",
@@ -29,14 +28,17 @@ instance = "u1060"
     "brd14051",
     "pla33810",
     "pla85900",
+    "valedojaguaribe15",
+    "valedojaguaribe21",
 """
-metaheuristic = "GeneticAlgorithm"
+metaheuristic = "SimulatedAnnealing"
 """
     "TabuSearch", 
     "SimulatedAnnealing", 
     "GeneticAlgorithm"
 """
-path = f"C:\\Users\\georg\\Codes\\Vehicle Routing Problem and Travelling Salesman Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\{instance}.tsp"
+# path = f"C:\\Users\\georg\\Codes\\Vehicle Routing Problem and Travelling Salesman Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\{instance}.tsp"
+path = f"C:\\Users\\georg\\Codes\\Vehicle Routing Problem and Travelling Salesman Problem\\Data Set\\Vale do Jaguaribe\\{instance}.tsp"
 times: List[float] = []
 costs: List[float] = []
 
