@@ -12,7 +12,7 @@ from node import Node
 from inputDataFrame import DataFrame
 import statistics
 
-instance = "valedojaguaribe15"
+instance = "ceara184"
 """
     "u1060",
     "vm1084",
@@ -30,6 +30,7 @@ instance = "valedojaguaribe15"
     "pla85900",
     "valedojaguaribe15",
     "valedojaguaribe21",
+    "ceara184",
 """
 metaheuristic = "SimulatedAnnealing"
 """
@@ -38,7 +39,8 @@ metaheuristic = "SimulatedAnnealing"
     "GeneticAlgorithm"
 """
 # path = f"C:\\Users\\georg\\Codes\\Vehicle Routing Problem and Travelling Salesman Problem\\Data Set\\DIMACS-TSPLIB-Benchmark\\{instance}.tsp"
-path = f"C:\\Users\\georg\\Codes\\Vehicle Routing Problem and Travelling Salesman Problem\\Data Set\\Vale do Jaguaribe\\{instance}.tsp"
+# path = f"C:\\Users\\georg\\Codes\\Vehicle Routing Problem and Travelling Salesman Problem\\Data Set\\Vale do Jaguaribe\\{instance}.tsp"
+path = f"C:\\Users\\georg\\Codes\\Vehicle Routing Problem and Travelling Salesman Problem\\Data Set\\Ceara\\{instance}.tsp"
 times: List[float] = []
 costs: List[float] = []
 
